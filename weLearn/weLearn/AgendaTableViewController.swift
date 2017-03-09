@@ -1,40 +1,49 @@
 //
-//  HomeworkTableViewController.swift
+//  AgendaTableViewController.swift
 //  weLearn
 //
-//  Created by Karen Fuentes on 2/27/17.
+//  Created by Karen Fuentes on 3/8/17.
 //  Copyright © 2017 Victor Zhong. All rights reserved.
 //
 
 import UIKit
 
-class HomeworkTableViewController: UITableViewController {
+class AgendaTableViewController: UITableViewController {
+    
+    var agenda: [Agenda]?
+    let agendaSheetID = "1o2OX0aweZIEiIgZNclasDH3CNYAX_doBNweP59cvfx4"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        readAgenda()
+    }
+    func readAgenda() {
+        APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(agendaSheetID)/od6/public/basic?alt=json") { (data: Data?) in
+            if data != nil {
+                if let returnedAgenda = Agenda.getAgenda(from: data!) {
+                    print("We've got returns: \(returnedAgenda.count)")
+                    self.agenda = returnedAgenda
+                    DispatchQueue.main.async {
+//                        self.todaysAgenda = self.todaysSchedule()
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return (agenda?.count)!
     }
 
     /*
