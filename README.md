@@ -1,8 +1,12 @@
 # weLearn
 
-WeLearn is a clutter-free resource management app that allows instructors to easily set up a lesson plan and students to share resources. Each class is powered under the hood by a template of 7 Google Sheets (ranging from Student Roster to Lesson Schedule w/ Github links), and weLearn distills that info to every student in every class in real time.
+WeLearn is a clutter-free resource management app that allows: 
+- instructors to easily set up a lesson plan, report grades, make announcements 
+- students to share resources. 
 
-In our experience with email and Slack make it so easy for important links, grades, and announcements to get lost in the mix. weLearn is here to help by being a trove of information.
+Each class is powered under the hood by a template of 7 Google Sheets (ranging from Student Roster to Lesson Schedule w/ Github links), and weLearn distills that info to every student in every class in real time.
+
+In our experience, email and Slack make it so easy for important links, grades, and announcements to get lost in the mix. weLearn is here to help by being a trove of information.
 
 On the backend, instructors use Google Sheets templates to upload grades, assignments, and announcements. They can even reward students with special achievement badges. This fosters a lively classroom culture and encourages students to strive.
 
