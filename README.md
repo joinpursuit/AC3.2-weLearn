@@ -1,6 +1,6 @@
 # weLearn
 
-WeLearn is a clutter-free resource management app that allows: 
+weLearn is a clutter-free resource management app that allows: 
 - instructors to easily set up a lesson plan, report grades, make announcements 
 - students to share resources. 
 
