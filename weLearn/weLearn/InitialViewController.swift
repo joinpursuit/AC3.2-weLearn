@@ -332,7 +332,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     
     func checkLogin() {
         if let currentUser = Auth.auth().currentUser {
-            //            self.present(TabViewController, animated: true)
             self.fillInSingleton(currentUser.uid)
             self.present(self.TabViewController, animated: true)
             self.navigationController?.navigationBar.isHidden = false
@@ -346,13 +345,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             let studentClass = classTextField.text,
             let studentID = studentIDTextField.text else { return nil }
         return (name, email, password, studentClass, studentID)
-    }
-    
-    func showAlert(title: String, _ errorMessage: String) {
-        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-        let okayButton = UIAlertAction(title: "Okay", style: .default, handler: nil)
-        alert.addAction(okayButton)
-        self.present(alert, animated: true, completion: nil)
     }
     
     func setUpDatabaseReference() {
@@ -498,8 +490,14 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             let userDefaults = UserDefaults(suiteName: "group.nyc.c4q.ac32.weLearn")
             userDefaults?.setValue(userID, forKey: "studentInfo")
             
-            if let error = error {
-                self.showAlert(title: "Login error", error.localizedDescription)
+            if let foundError = error {
+                switch foundError.localizedDescription as String {
+                case "The email address is badly formatted.":
+                    showAlert("Wrong username.", presentOn: self)
+                default:
+                    showAlert("Wrong username or password.", presentOn: self)
+                }
+                
                 self.activityIndicator.stopAnimating()
                 self.activityIndicatorLabel.isHidden = true
                 self.loadingOverlay.isHidden = true
@@ -551,8 +549,18 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 userDefaults?.setValue(userID, forKey: "studentInfo")
             }
             
-            if let error = error {
-                self.showAlert(title: "Registering Error", error.localizedDescription)
+            if let foundError = error {
+                print(foundError.localizedDescription)
+                switch foundError.localizedDescription as String {
+                case "The email address is already in use by another account.":
+                    showAlert("That email is already in use.", presentOn: self)
+                case "The password must be 6 characters long or more.":
+                    showAlert("Your password is too short.", presentOn: self)
+                case "The email address is badly formatted.":
+                    showAlert("We need a proper email address.", presentOn: self)
+                default:
+                    showAlert("Please fill out all fields.", presentOn: self)
+                }
                 
                 self.registerButton.isEnabled = true
                 self.registerButton.transform = .identity
