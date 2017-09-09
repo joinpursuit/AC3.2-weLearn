@@ -12,7 +12,7 @@ import AudioToolbox
 import FirebaseAuth
 import FirebaseStorage
 
-class OldAnnouncementsTableViewController: UITableViewController {
+class AnnouncementsTableViewController: UITableViewController {
     
     fileprivate let reuseIdentifier = "AnnouncementCell"
     

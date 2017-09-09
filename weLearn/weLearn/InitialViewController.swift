@@ -29,17 +29,17 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     
     var TabViewController = UITabBarController()
     
-    var tabAgenda = UITableViewController()
-    var tabLinks = UITableViewController()
-    var tabAnnouncements = UITableViewController()
-    var tabProfile = UIViewController()
-    var tabAssignments = UIViewController()
+    var tabAgenda: UITableViewController?
+    var tabLinks: UITableViewController?
+    var tabAnnouncements: UITableViewController?
+    var tabProfile: UIViewController?
+    var tabAssignments: UIViewController?
     
-    var navControllerAgenda = UINavigationController()
-    var navControllerLinks = UINavigationController()
-    var navControllerAnnouncements = UINavigationController()
-    var navControllerProfile = UINavigationController()
-    var navControllerAssignments = UINavigationController()
+    var navControllerAgenda: UINavigationController?
+    var navControllerLinks: UINavigationController?
+    var navControllerAnnouncements: UINavigationController?
+    var navControllerProfile: UINavigationController?
+    var navControllerAssignments: UINavigationController?
     
     var viewControllers = [UINavigationController]()
     
@@ -110,31 +110,39 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         
         tabAgenda = AgendaTableViewController()
         tabLinks = LinkTableViewController()
-        tabAnnouncements = OldAnnouncementsTableViewController()
+        tabAnnouncements = AnnouncementsTableViewController()
         tabAssignments = AssignmentTableViewController()
         tabProfile = ProfileViewController()
         
-        navControllerAgenda = UINavigationController(rootViewController: tabAgenda)
-        navControllerLinks = UINavigationController(rootViewController: tabLinks)
-        navControllerAnnouncements = UINavigationController(rootViewController: tabAnnouncements)
-        navControllerAssignments = UINavigationController(rootViewController: tabAssignments)
-        navControllerProfile = UINavigationController(rootViewController: tabProfile)
+        guard let agenda = tabAgenda,
+            let links = tabLinks,
+            let announcements = tabAnnouncements,
+            let assignments = tabAssignments,
+            let profile = tabProfile else { return }
+        
+        navControllerAgenda = UINavigationController(rootViewController: agenda)
+        navControllerLinks = UINavigationController(rootViewController: links)
+        navControllerAnnouncements = UINavigationController(rootViewController: announcements)
+        navControllerAssignments = UINavigationController(rootViewController: assignments)
+        navControllerProfile = UINavigationController(rootViewController: profile)
+        
+        guard let navControllerAgenda = navControllerAgenda,
+            let navControllerLinks = navControllerLinks,
+            let navControllerAnnouncements = navControllerAnnouncements,
+            let navControllerAssignments = navControllerAssignments,
+            let navControllerProfile = navControllerProfile else { return }
         
         viewControllers = [navControllerAgenda, navControllerLinks, navControllerAnnouncements, navControllerAssignments, navControllerProfile]
         
         TabViewController.viewControllers = viewControllers
         
-        tabAgenda.tabBarItem = UITabBarItem(title: "Agenda", image: tabAgendaImage, tag: 1)
-        tabLinks.tabBarItem = UITabBarItem(title: "Links", image: tabLinksImage, tag: 2)
-        tabAnnouncements.tabBarItem = UITabBarItem(title: "Announcements", image: tabAnnouncementsImage, tag: 3)
-        tabAssignments.tabBarItem = UITabBarItem(title: "Assignments", image: tabAssignmentImage, tag: 5)
-        tabProfile.tabBarItem = UITabBarItem(title: "Profile", image: tabProfileImage, tag: 4)
+        agenda.tabBarItem = UITabBarItem(title: "Agenda", image: tabAgendaImage, tag: 1)
+        links.tabBarItem = UITabBarItem(title: "Links", image: tabLinksImage, tag: 2)
+        announcements.tabBarItem = UITabBarItem(title: "Announcements", image: tabAnnouncementsImage, tag: 3)
+        assignments.tabBarItem = UITabBarItem(title: "Assignments", image: tabAssignmentImage, tag: 5)
+        profile.tabBarItem = UITabBarItem(title: "Profile", image: tabProfileImage, tag: 4)
         
-        tabAgenda.view.backgroundColor = UIColor.weLearnBlue
-        tabLinks.view.backgroundColor = UIColor.weLearnBlue
-        tabAnnouncements.view.backgroundColor = UIColor.weLearnBlue
-        tabAssignments.view.backgroundColor = UIColor.weLearnBlue
-        tabProfile.view.backgroundColor = UIColor.weLearnBlue
+        _ = [agenda, links, announcements, assignments, profile].map { $0.view.backgroundColor = UIColor.weLearnBlue }
         
         TabViewController.tabBar.tintColor = UIColor.weLearnBlue
         TabViewController.tabBar.barTintColor = UIColor.weLearnCoolWhite
@@ -587,7 +595,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         registerButton.isEnabled = true
         registerTabLabel.textColor = UIColor.weLearnBlue
         loginTabLabel.textColor = UIColor.weLearnBlue.withAlphaComponent(0.6)
-        toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = false }
+        _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = false }
     }
     
     func loginTabWasPressed() {
@@ -610,7 +618,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         loginTabLabel.textColor = UIColor.weLearnBlue
         registerTabLabel.textColor = UIColor.weLearnBlue.withAlphaComponent(0.6)
         
-        toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = true }
+        _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = true }
     }
     
     // MARK: - Views created here
