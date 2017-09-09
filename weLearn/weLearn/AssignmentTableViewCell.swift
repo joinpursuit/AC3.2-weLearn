@@ -84,27 +84,11 @@ class AssignmentTableViewCell: UITableViewCell {
             view.width.height.equalTo(40)
         }
         
-//        optionalTimerLabel.snp.makeConstraints { view in
-//            view.centerY.equalTo(topHorizontalRule.snp.bottom)
-//            view.centerX.equalTo(box)
-//            view.width.height.equalTo(40)
-//        }
-        
         optionalTimerLabelsShadow.snp.makeConstraints { view in
             view.centerY.equalTo(optionalTimerLabel)
             view.centerX.equalTo(optionalTimerLabel)
             view.width.height.equalTo(optionalTimerLabel).multipliedBy(1.2)
         }
-        
-//        dateLabel.snp.makeConstraints { label in
-//            label.top.equalTo(assignmentNameLabel.snp.bottom).offset(20)
-//            label.leading.equalTo(box).offset(10)
-//        }
-        
-//        gradeLabel.snp.makeConstraints { label in
-//            label.top.equalTo(topHorizontalRule.snp.bottom)
-//            label.centerX.equalTo(box)
-//        }
         
         topHorizontalRule.snp.makeConstraints { view in
             view.height.equalTo(1)
@@ -116,7 +100,7 @@ class AssignmentTableViewCell: UITableViewCell {
         bottomHorizontalRule.snp.makeConstraints { view in
             view.height.equalTo(1)
             view.width.equalTo(box)
-            view.centerY.equalTo(/*gradeLabel*/assignmentCountDownLabel.snp.bottom)
+            view.centerY.equalTo(assignmentCountDownLabel.snp.bottom)
             view.centerX.equalTo(box)
             view.bottom.equalTo(box).inset(10)
         }
@@ -141,12 +125,6 @@ class AssignmentTableViewCell: UITableViewCell {
         label.isOpaque = true
         return label
     }()
-    
-//    lazy var dateLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = UIFont(name: "Avenir-Light", size: 16)
-//        return label
-//    }()
     
     lazy var assignmentCountDownLabel: UILabel = {
         let label = UILabel()

@@ -14,9 +14,9 @@ import FirebaseDatabase
 
 class InitialViewController: UIViewController, UITextFieldDelegate {
     
-    var databaseReference: FIRDatabaseReference!
-    var databaseObserver: FIRDatabaseHandle?
-    var signedInUser: FIRUser?
+    var databaseReference: DatabaseReference!
+    var databaseObserver: DatabaseHandle?
+    var signedInUser: User?
     
     var toggleIsHiddenWhenTabIsChanged = [UIView]()
     
@@ -54,7 +54,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        databaseReference = FIRDatabase.database().reference()
+        databaseReference = Database.database().reference()
         
         self.view.apply(gradient: [UIColor.weLearnBlue, UIColor.weLearnLightBlue, UIColor.weLearnCoolWhite])
         
@@ -323,7 +323,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Button Actions and Functions
     
     func checkLogin() {
-        if let currentUser = FIRAuth.auth()?.currentUser {
+        if let currentUser = Auth.auth().currentUser {
             //            self.present(TabViewController, animated: true)
             self.fillInSingleton(currentUser.uid)
             self.present(self.TabViewController, animated: true)
@@ -350,7 +350,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     func setUpDatabaseReference() {
         guard let credentials = signInCredentials() else { return }
         var databaseCodeForClass = ""
-        let currentUser = FIRAuth.auth()!.currentUser!.uid
+        let currentUser = Auth.auth().currentUser!.uid
         let referenceLink = databaseReference.child("users").child(currentUser)
         
         // 1) Find out if a class exists, or generate it
@@ -361,7 +361,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             
             // 2) Loops through every snapshot in the Classes node to see if user's class exists
             for child in snapshot.children {
-                if let snap = child as? FIRDataSnapshot,
+                if let snap = child as? DataSnapshot,
                     let valueDict = snap.value as? [String : Any] {
                     
                     if let name = valueDict["name"] as? String {
@@ -420,7 +420,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         let user = databaseReference.child("users").child(string)
         user.observeSingleEvent(of: .value, with: { (snapshot) in
             if let valueDict = snapshot.value as? [String : Any] {
-                let user = User.manager
+                let user = Student.manager
                 user.classroom = valueDict["class"] as? String
                 user.classDatabaseKey = valueDict["classKey"] as? String
                 user.email = valueDict["studentEmail"] as? String
@@ -476,7 +476,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         loadingOverlay.isHidden = false
         activityIndicator.startAnimating()
         
-        FIRAuth.auth()?.signIn(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
+        Auth.auth().signIn(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
             
             if let loggedInUser = user {
                 self.fillInSingleton(loggedInUser.uid)
@@ -486,7 +486,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 self.navigationController?.navigationBar.isHidden = false
             }
             
-            let userID = FIRAuth.auth()?.currentUser?.uid
+            let userID = Auth.auth().currentUser?.uid
             let userDefaults = UserDefaults(suiteName: "group.nyc.c4q.ac32.weLearn")
             userDefaults?.setValue(userID, forKey: "studentInfo")
             
@@ -519,7 +519,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         loadingOverlay.isHidden = false
         activityIndicator.startAnimating()
         
-        FIRAuth.auth()?.createUser(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
+        Auth.auth().createUser(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
             if error == nil {
                 self.signedInUser = user
                 self.setUpDatabaseReference()

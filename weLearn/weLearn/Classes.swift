@@ -84,13 +84,13 @@ class ClassFromSheet {
     }
     
     static func postClassInfoToDatabase(_ classes: [ClassFromSheet]) {
-        let classBuckets = FIRDatabase.database().reference().child("classes")
+        let classBuckets = Database.database().reference().child("classes")
         var classDict: [String : String] = [:]
         
         // Populate classDict with [name : databaseKey] values
         classBuckets.observeSingleEvent(of: .value, with: { (snapshot) in
             for child in snapshot.children {
-                if let snap = child as? FIRDataSnapshot, let valueDict = snap.value as? [String : Any] {
+                if let snap = child as? DataSnapshot, let valueDict = snap.value as? [String : Any] {
                     if let name = valueDict["name"] as? String {
                         classDict[name] = snap.key
                     }

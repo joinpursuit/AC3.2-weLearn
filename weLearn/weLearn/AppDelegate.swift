@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //Firebase config
-        FIRApp.configure()
+        FirebaseApp.configure()
         classSheetsSetup()
         //UIApplication.shared.statusBarStyle = .lightContent
         StyleManager.styler.prettify()

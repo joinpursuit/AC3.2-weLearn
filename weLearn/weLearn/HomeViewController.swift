@@ -24,7 +24,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var agenda: [Agenda]?
     var assignments: [Assignment]? {
         didSet {
-            User.manager.assignments = assignments
+            Student.manager.assignments = assignments
         }
     }
     

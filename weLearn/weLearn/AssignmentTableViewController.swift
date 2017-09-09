@@ -16,13 +16,13 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     
     var assignments: [Assignment]? {
         didSet {
-            User.setAssignmentsReversed(assignments)
+            Student.setAssignmentsReversed(assignments)
         }
     }
     
     var gradesParsed: [(assignment: String, grade: String)] = [] {
         didSet {
-            User.manager.assignmentGrades = gradesParsed.reversed()
+            Student.manager.assignmentGrades = gradesParsed.reversed()
         }
     }
     
@@ -32,7 +32,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     let assignmentSheetID = MyClass.manager.assignmentsID!
     let gradeBookSheetID = MyClass.manager.gradeBookID!
     var assignmentGrades: AssignmentGrade?
-    var databaseReference: FIRDatabaseReference!
+    var databaseReference: DatabaseReference!
     
     var stopTime: String = ""
     
@@ -42,7 +42,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
         self.navigationItem.title = "Assignments"
         self.tabBarController?.title = navigationItem.title
         
-        databaseReference = FIRDatabase.database().reference()
+        databaseReference = Database.database().reference()
         
         tableView.register(AssignmentTableViewCell.self, forCellReuseIdentifier: "AssignmentTableViewCell")
         
@@ -69,7 +69,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     }
     
     func startGrabbingAssignmentsData() {
-        if User.manager.assignmentGrades == nil {
+        if Student.manager.assignmentGrades == nil {
             APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(gradeBookSheetID)/od6/public/basic?alt=json") { (data: Data?) in
                 if data != nil {
                     self.fetchStudentAssignmentData(data!)
@@ -81,7 +81,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     func fetchStudentAssignmentData(_ data: Data) {
         
         // Now that we have the number, grab that person's grades
-        if let studentID = User.manager.id {
+        if let studentID = Student.manager.id {
             if let returnedGradesData = AssignmentGrade.getStudentAssignmentGrade(from: data, for: studentID) {
                 print("\n\n\nWe've got grades for: \(returnedGradesData.id)")
                 
@@ -98,7 +98,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
         
-        if User.manager.assignments == nil {
+        if Student.manager.assignments == nil {
             APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(assignmentSheetID)/od6/public/basic?alt=json") { (data: Data?) in
                 if data != nil {
                     if let returnedAssignments = Assignment.getAssignment(from: data!) {
@@ -134,7 +134,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
             currentCell.box.layer.sublayers!.remove(at: 0)
         })
         
-        if let assignments = User.manager.assignments {
+        if let assignments = Student.manager.assignments {
             if let link = assignments[index.row].url {
                 AudioServicesPlaySystemSound(1105)
                 let svc = SFSafariViewController(url: URL(string: link)!)
@@ -169,7 +169,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
             if assignmentCell.delegate == nil {
                 assignmentCell.delegate = self
             }
-            if let assignments = User.manager.assignments {
+            if let assignments = Student.manager.assignments {
                 let assignment = assignments[indexPath.row]
                 let endTime = assignment.date
                 let difference = endTime.timeIntervalSinceNow
@@ -178,7 +178,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                     assignmentCell.assignmentNameLabel.text = assignment.assignmentTitle
                     assignmentCell.optionalTimerLabel.isHidden = true
                     assignmentCell.optionalTimerLabelsShadow.isHidden = true
-                    if let gradeAtRow = User.manager.assignmentGrades {
+                    if let gradeAtRow = Student.manager.assignmentGrades {
                         assignmentCell.assignmentCountDownLabel.text = "Grade: \(gradeAtRow[indexPath.row].grade)"
                     }
                 } else {
