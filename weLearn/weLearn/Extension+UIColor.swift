@@ -21,6 +21,8 @@ extension UIColor {
     static let weLearnLightGreen = UIColor(red:0.82, green:0.95, blue:0.92, alpha:1.0)
     // base green
     static let weLearnGreen = UIColor(red:0.00, green:0.75, blue:0.6, alpha:1.0)
+    // bright blue
+    static let weLearnBrightBlue = UIColor(red:0.26, green:0.80, blue:1.00, alpha:1.0)
     // light blue
     static let weLearnLightBlue = UIColor(red:0.59, green:0.82, blue:0.93, alpha:1.0)
     // base blue
