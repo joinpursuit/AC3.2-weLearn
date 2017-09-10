@@ -14,9 +14,9 @@ import FirebaseDatabase
 
 class InitialViewController: UIViewController, UITextFieldDelegate {
     
-    var databaseReference: FIRDatabaseReference!
-    var databaseObserver: FIRDatabaseHandle?
-    var signedInUser: FIRUser?
+    var databaseReference: DatabaseReference!
+    var databaseObserver: DatabaseHandle?
+    var signedInUser: User?
     
     var toggleIsHiddenWhenTabIsChanged = [UIView]()
     
@@ -29,17 +29,17 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     
     var TabViewController = UITabBarController()
     
-    var tabAgenda = UITableViewController()
-    var tabLinks = UITableViewController()
-    var tabAnnouncements = UITableViewController()
-    var tabProfile = UIViewController()
-    var tabAssignments = UIViewController()
+    var tabAgenda: UITableViewController?
+    var tabLinks: UITableViewController?
+    var tabAnnouncements: UITableViewController?
+    var tabProfile: UIViewController?
+    var tabAssignments: UIViewController?
     
-    var navControllerAgenda = UINavigationController()
-    var navControllerLinks = UINavigationController()
-    var navControllerAnnouncements = UINavigationController()
-    var navControllerProfile = UINavigationController()
-    var navControllerAssignments = UINavigationController()
+    var navControllerAgenda: UINavigationController?
+    var navControllerLinks: UINavigationController?
+    var navControllerAnnouncements: UINavigationController?
+    var navControllerProfile: UINavigationController?
+    var navControllerAssignments: UINavigationController?
     
     var viewControllers = [UINavigationController]()
     
@@ -54,9 +54,9 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        databaseReference = FIRDatabase.database().reference()
+        databaseReference = Database.database().reference()
         
-        self.view.apply(gradient: [UIColor.weLearnBlue, UIColor.weLearnLightBlue, UIColor.weLearnCoolWhite])
+        self.view.apply(gradient: [UIColor.weLearnBrightBlue, UIColor.weLearnLightBlue, UIColor.white])
         
         // these all need the delegate set to get sound on click
         self.passwordTextField.delegate = self
@@ -110,31 +110,39 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         
         tabAgenda = AgendaTableViewController()
         tabLinks = LinkTableViewController()
-        tabAnnouncements = OldAnnouncementsTableViewController()
+        tabAnnouncements = AnnouncementsTableViewController()
         tabAssignments = AssignmentTableViewController()
         tabProfile = ProfileViewController()
         
-        navControllerAgenda = UINavigationController(rootViewController: tabAgenda)
-        navControllerLinks = UINavigationController(rootViewController: tabLinks)
-        navControllerAnnouncements = UINavigationController(rootViewController: tabAnnouncements)
-        navControllerAssignments = UINavigationController(rootViewController: tabAssignments)
-        navControllerProfile = UINavigationController(rootViewController: tabProfile)
+        guard let agenda = tabAgenda,
+            let links = tabLinks,
+            let announcements = tabAnnouncements,
+            let assignments = tabAssignments,
+            let profile = tabProfile else { return }
+        
+        navControllerAgenda = UINavigationController(rootViewController: agenda)
+        navControllerLinks = UINavigationController(rootViewController: links)
+        navControllerAnnouncements = UINavigationController(rootViewController: announcements)
+        navControllerAssignments = UINavigationController(rootViewController: assignments)
+        navControllerProfile = UINavigationController(rootViewController: profile)
+        
+        guard let navControllerAgenda = navControllerAgenda,
+            let navControllerLinks = navControllerLinks,
+            let navControllerAnnouncements = navControllerAnnouncements,
+            let navControllerAssignments = navControllerAssignments,
+            let navControllerProfile = navControllerProfile else { return }
         
         viewControllers = [navControllerAgenda, navControllerLinks, navControllerAnnouncements, navControllerAssignments, navControllerProfile]
         
         TabViewController.viewControllers = viewControllers
         
-        tabAgenda.tabBarItem = UITabBarItem(title: "Agenda", image: tabAgendaImage, tag: 1)
-        tabLinks.tabBarItem = UITabBarItem(title: "Links", image: tabLinksImage, tag: 2)
-        tabAnnouncements.tabBarItem = UITabBarItem(title: "Announcements", image: tabAnnouncementsImage, tag: 3)
-        tabAssignments.tabBarItem = UITabBarItem(title: "Assignments", image: tabAssignmentImage, tag: 5)
-        tabProfile.tabBarItem = UITabBarItem(title: "Profile", image: tabProfileImage, tag: 4)
+        agenda.tabBarItem = UITabBarItem(title: "Agenda", image: tabAgendaImage, tag: 1)
+        links.tabBarItem = UITabBarItem(title: "Links", image: tabLinksImage, tag: 2)
+        announcements.tabBarItem = UITabBarItem(title: "Announcements", image: tabAnnouncementsImage, tag: 3)
+        assignments.tabBarItem = UITabBarItem(title: "Assignments", image: tabAssignmentImage, tag: 5)
+        profile.tabBarItem = UITabBarItem(title: "Profile", image: tabProfileImage, tag: 4)
         
-        tabAgenda.view.backgroundColor = UIColor.weLearnBlue
-        tabLinks.view.backgroundColor = UIColor.weLearnBlue
-        tabAnnouncements.view.backgroundColor = UIColor.weLearnBlue
-        tabAssignments.view.backgroundColor = UIColor.weLearnBlue
-        tabProfile.view.backgroundColor = UIColor.weLearnBlue
+        _ = [agenda, links, announcements, assignments, profile].map { $0.view.backgroundColor = UIColor.weLearnBlue }
         
         TabViewController.tabBar.tintColor = UIColor.weLearnBlue
         TabViewController.tabBar.barTintColor = UIColor.weLearnCoolWhite
@@ -323,8 +331,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Button Actions and Functions
     
     func checkLogin() {
-        if let currentUser = FIRAuth.auth()?.currentUser {
-            //            self.present(TabViewController, animated: true)
+        if let currentUser = Auth.auth().currentUser {
             self.fillInSingleton(currentUser.uid)
             self.present(self.TabViewController, animated: true)
             self.navigationController?.navigationBar.isHidden = false
@@ -340,17 +347,10 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         return (name, email, password, studentClass, studentID)
     }
     
-    func showAlert(title: String, _ errorMessage: String) {
-        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
-        let okayButton = UIAlertAction(title: "Okay", style: .default, handler: nil)
-        alert.addAction(okayButton)
-        self.present(alert, animated: true, completion: nil)
-    }
-    
     func setUpDatabaseReference() {
         guard let credentials = signInCredentials() else { return }
         var databaseCodeForClass = ""
-        let currentUser = FIRAuth.auth()!.currentUser!.uid
+        let currentUser = Auth.auth().currentUser!.uid
         let referenceLink = databaseReference.child("users").child(currentUser)
         
         // 1) Find out if a class exists, or generate it
@@ -361,7 +361,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             
             // 2) Loops through every snapshot in the Classes node to see if user's class exists
             for child in snapshot.children {
-                if let snap = child as? FIRDataSnapshot,
+                if let snap = child as? DataSnapshot,
                     let valueDict = snap.value as? [String : Any] {
                     
                     if let name = valueDict["name"] as? String {
@@ -420,7 +420,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         let user = databaseReference.child("users").child(string)
         user.observeSingleEvent(of: .value, with: { (snapshot) in
             if let valueDict = snapshot.value as? [String : Any] {
-                let user = User.manager
+                let user = Student.manager
                 user.classroom = valueDict["class"] as? String
                 user.classDatabaseKey = valueDict["classKey"] as? String
                 user.email = valueDict["studentEmail"] as? String
@@ -476,7 +476,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         loadingOverlay.isHidden = false
         activityIndicator.startAnimating()
         
-        FIRAuth.auth()?.signIn(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
+        Auth.auth().signIn(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
             
             if let loggedInUser = user {
                 self.fillInSingleton(loggedInUser.uid)
@@ -486,12 +486,18 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 self.navigationController?.navigationBar.isHidden = false
             }
             
-            let userID = FIRAuth.auth()?.currentUser?.uid
+            let userID = Auth.auth().currentUser?.uid
             let userDefaults = UserDefaults(suiteName: "group.nyc.c4q.ac32.weLearn")
             userDefaults?.setValue(userID, forKey: "studentInfo")
             
-            if let error = error {
-                self.showAlert(title: "Login error", error.localizedDescription)
+            if let foundError = error {
+                switch foundError.localizedDescription as String {
+                case "The email address is badly formatted.":
+                    showAlert("Wrong username.", presentOn: self)
+                default:
+                    showAlert("Wrong username or password.", presentOn: self)
+                }
+                
                 self.activityIndicator.stopAnimating()
                 self.activityIndicatorLabel.isHidden = true
                 self.loadingOverlay.isHidden = true
@@ -519,7 +525,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         loadingOverlay.isHidden = false
         activityIndicator.startAnimating()
         
-        FIRAuth.auth()?.createUser(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
+        Auth.auth().createUser(withEmail: credentials.email, password: credentials.password, completion: { (user, error) in
             if error == nil {
                 self.signedInUser = user
                 self.setUpDatabaseReference()
@@ -543,8 +549,18 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 userDefaults?.setValue(userID, forKey: "studentInfo")
             }
             
-            if let error = error {
-                self.showAlert(title: "Registering Error", error.localizedDescription)
+            if let foundError = error {
+                print(foundError.localizedDescription)
+                switch foundError.localizedDescription as String {
+                case "The email address is already in use by another account.":
+                    showAlert("That email is already in use.", presentOn: self)
+                case "The password must be 6 characters long or more.":
+                    showAlert("Your password is too short.", presentOn: self)
+                case "The email address is badly formatted.":
+                    showAlert("We need a proper email address.", presentOn: self)
+                default:
+                    showAlert("Please fill out all fields.", presentOn: self)
+                }
                 
                 self.registerButton.isEnabled = true
                 self.registerButton.transform = .identity
@@ -587,7 +603,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         registerButton.isEnabled = true
         registerTabLabel.textColor = UIColor.weLearnBlue
         loginTabLabel.textColor = UIColor.weLearnBlue.withAlphaComponent(0.6)
-        toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = false }
+        _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = false }
     }
     
     func loginTabWasPressed() {
@@ -610,15 +626,13 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         loginTabLabel.textColor = UIColor.weLearnBlue
         registerTabLabel.textColor = UIColor.weLearnBlue.withAlphaComponent(0.6)
         
-        toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = true }
+        _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = true }
     }
     
     // MARK: - Views created here
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
     
@@ -642,7 +656,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         let originalImage = #imageLiteral(resourceName: "logoForSplash")
         let templateImage = originalImage.withRenderingMode(.alwaysTemplate)
         view.image = templateImage
-        view.tintColor = /*UIColor(red:0.30, green:0.51, blue:0.69, alpha:1.0)*/UIColor.weLearnLightBlue.withAlphaComponent(0.2)
+        view.tintColor = UIColor.weLearnCoolWhite.withAlphaComponent(0.05)
         view.layer.masksToBounds = false
         return view
     }()

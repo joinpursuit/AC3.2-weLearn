@@ -8,9 +8,9 @@
 
 import Foundation
 
-class User {
+class Student {
     
-    static let manager = User()
+    static let manager = Student()
     private init() {}
     
     // For temporary, global storage of user info after credentials have been provided
@@ -30,12 +30,12 @@ class User {
     
     static func clearSingleton() {
         var strings = [
-            User.manager.name,
-            User.manager.email,
-            User.manager.id,
-            User.manager.classDatabaseKey,
-            User.manager.image,
-            User.manager.studentKey
+            Student.manager.name,
+            Student.manager.email,
+            Student.manager.id,
+            Student.manager.classDatabaseKey,
+            Student.manager.image,
+            Student.manager.studentKey
         ]
         
         // Clear strings
@@ -44,21 +44,21 @@ class User {
         }
         
         // Clear the rest
-        User.manager.assignments = nil
-        User.manager.assignmentGrades = nil
-        User.manager.grades = nil
-        User.manager.achievements = nil
+        Student.manager.assignments = nil
+        Student.manager.assignmentGrades = nil
+        Student.manager.grades = nil
+        Student.manager.achievements = nil
     }
     
     static func setAssignmentsReversed(_ assignments: [Assignment]?) {
         if let assign = assignments {
-            User.manager.assignments = assign.reversed()
+            Student.manager.assignments = assign.reversed()
         }
     }
     
     // Clears the singletons
     static func logOut() {
-        User.clearSingleton()
+        Student.clearSingleton()
         MyClass.clearSingleton()
         LessonSchedule.clearSchedule()
     }

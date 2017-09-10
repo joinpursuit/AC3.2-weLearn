@@ -26,15 +26,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         //Firebase config
-        FIRApp.configure()
+        FirebaseApp.configure()
         classSheetsSetup()
-        //UIApplication.shared.statusBarStyle = .lightContent
+        UIApplication.shared.statusBarStyle = .lightContent
         StyleManager.styler.prettify()
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         if let window = self.window {
-            window.backgroundColor =  UIColor.weLearnBlue
+            window.apply(gradient: [UIColor.weLearnBrightBlue, UIColor.weLearnLightBlue, UIColor.white])
             
             let myRootVC = InitialViewController()
             window.rootViewController = myRootVC
@@ -160,9 +160,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         let studentInfoUserDefaults = UserDefaults.standard
-        guard let studentInfo = studentInfoUserDefaults.object(forKey: "studentInfo") as? [String : String],
-            let studentClass = studentInfo["class"],
-            let studentName = studentInfo["studentName"] else { return }
+        
+        if let studentInfo = studentInfoUserDefaults.object(forKey: "studentInfo") as? [String : String] {
+            guard studentInfo["class"] != nil && studentInfo["studentName"] != nil else { return }
+        } else { return }
         
         //        let databaseReference = FIRDatabase.database().reference().child("Links").child(studentClass).childByAutoId()
         //

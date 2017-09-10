@@ -19,7 +19,7 @@ class AgendaTableViewController: UITableViewController {
     var todaysAgenda: Agenda?
     var toDoList: [String]? = ["Do your best", "Study hard", "Get sleep"] {
         didSet {
-            User.manager.toDoList = toDoList
+            Student.manager.toDoList = toDoList
         }
     }
     var checkedOff = [Int]()
@@ -47,7 +47,7 @@ class AgendaTableViewController: UITableViewController {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 268.0
         
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
         
         self.view.addSubview(activityIndicator)
         
@@ -86,7 +86,7 @@ class AgendaTableViewController: UITableViewController {
     // MARK: - Agenda functions
     
     func grabToDoList() {
-        if User.manager.toDoList == nil {
+        if Student.manager.toDoList == nil {
             APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(toDoListSheetID)/od6/public/basic?alt=json") { (data: Data?) in
                 if data != nil {
                     if let returnedList = ToDoList.getTodaysList(from: data!) {
@@ -145,7 +145,7 @@ class AgendaTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
-        header.textLabel?.textColor = UIColor.weLearnBlue
+        header.textLabel?.textColor = UIColor.weLearnCoolWhite
         header.textLabel?.font = UIFont(name: "Avenir-Light", size: 30)
         header.textLabel?.textAlignment = .center
         header.textLabel?.adjustsFontSizeToFitWidth = true
@@ -191,10 +191,10 @@ class AgendaTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "AgendaTableViewCell", for: indexPath) as! AgendaTableViewCell
         
-        cell.selectionStyle = .none
-        
         switch indexPath.section {
         case 0:
+            cell.selectionStyle = .blue
+            
             if let toDo = toDoList {
                 cell.label.text = toDo[indexPath.row]
             }
@@ -206,6 +206,8 @@ class AgendaTableViewController: UITableViewController {
             }
             
         case 1:
+            cell.selectionStyle = .none
+            
             if let agenda = LessonSchedule.manager.pastAgenda {
                 let agendaAtRow = agenda[indexPath.row]
                 cell.label.text = "\(agendaAtRow.dateString) - \(agendaAtRow.lessonName)"
@@ -285,8 +287,6 @@ class AgendaTableViewController: UITableViewController {
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
     
@@ -316,7 +316,7 @@ class AgendaTableViewController: UITableViewController {
             cell.spin = 2
             cell.spinRange = 3
             cell.scale = 0.1
-            cell.scaleRange = 0.5
+            cell.scaleRange = 0.75
             cell.scaleSpeed = -0.05
             cell.contents = #imageLiteral(resourceName: "bullet").cgImage
             cell.color = color.cgColor
@@ -324,11 +324,14 @@ class AgendaTableViewController: UITableViewController {
             return cell
         }
         
-        let green = makeCell(color: UIColor.weLearnGreen)
-        let white = makeCell(color: UIColor.white)
-        let blue = makeCell(color: UIColor.weLearnLightBlue)
+        let green = makeCell(color: UIColor(red:0.30, green:0.85, blue:0.39, alpha:1.0))
+        let pureWhite = makeCell(color: UIColor.white)
+        let lightBlue = makeCell(color: UIColor.weLearnLightBlue)
+        let coolWhite = makeCell(color: UIColor.weLearnCoolWhite)
+        let yellow =  makeCell(color: UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.0))
+        let red = makeCell(color: UIColor(red:1.00, green:0.18, blue:0.33, alpha:1.0))
         
-        emitterLayer.emitterCells = [green, white, blue]
+        emitterLayer.emitterCells = [green, coolWhite, lightBlue, pureWhite, yellow, red]
         view.layer.addSublayer(emitterLayer)
         
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
@@ -339,11 +342,11 @@ class AgendaTableViewController: UITableViewController {
     lazy var fanfareLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.white
-        label.font = UIFont(name: "Avenir-LightOblique", size: 36)
+        label.font = UIFont(name: "Avenir-HeavyOblique", size: 36)
         label.textAlignment = .center
         label.numberOfLines = 5
         label.lineBreakMode = .byWordWrapping
-        label.backgroundColor = UIColor.weLearnBlue.withAlphaComponent(0.8)
+        label.backgroundColor = UIColor.weLearnBrightBlue.withAlphaComponent(0.8)
         return label
     }()
 }

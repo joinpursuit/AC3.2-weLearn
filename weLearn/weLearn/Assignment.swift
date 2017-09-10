@@ -15,7 +15,6 @@ enum AssignmentModelParseError: Error {
 class Assignment {
     let assignmentTitle: String
     let date: Date
-    //    let score: String?
     let url: String?
     
     init(assignmentTitle: String, date: Date, url: String?) {

@@ -18,15 +18,15 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     var achievements: [Achievement]? {
         didSet {
-            User.manager.achievements = achievements
+            Student.manager.achievements = achievements
         }
     }
     
     var testGrades: TestGrade?
-    var databaseReference: FIRDatabaseReference!
+    var databaseReference: DatabaseReference!
     var gradesParsed: [(assignment: String, grade: String)] = [] {
         didSet {
-            User.manager.grades = gradesParsed
+            Student.manager.grades = gradesParsed
         }
     }
     
@@ -56,9 +56,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         profilePic.layer.cornerRadius = 50
         profilePic.clipsToBounds = true
         
-        databaseReference = FIRDatabase.database().reference()
+        databaseReference = Database.database().reference()
         
-        if User.manager.studentKey != nil {
+        if Student.manager.studentKey != nil {
             getProfileImage()
         }
         
@@ -87,7 +87,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         //        if achievements == nil {
         getChievos()
         //        }
-        if User.manager.studentKey != nil {
+        if Student.manager.studentKey != nil {
             getProfileImage()
         }
     }
@@ -96,7 +96,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         //        if User.manager.achievements == nil {
         APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(achievementsSheetID)/od6/public/basic?alt=json") { (data: Data?) in
             if data != nil {
-                if let returnedAnnouncements = AchievementBucket.getStudentAchievementBucket(from: data!, for: User.manager.id!) {
+                if let returnedAnnouncements = AchievementBucket.getStudentAchievementBucket(from: data!, for: Student.manager.id!) {
                     DispatchQueue.main.async {
                         self.achievements = AchievementBucket.parseBucketString(returnedAnnouncements.contentString)
                         self.collectionView.reloadData()
@@ -111,11 +111,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func getProfileImage() {
-        let storage = FIRStorage.storage()
+        let storage = Storage.storage()
         let storageRef = storage.reference()
-        let imageRef = storageRef.child("profileImage/\(User.manager.studentKey!)")
+        let imageRef = storageRef.child("profileImage/\(Student.manager.studentKey!)")
         
-        imageRef.data(withMaxSize: 1*1024*1024) { (data, error) in
+        imageRef.getData(maxSize: 1*1024*1024) { (data, error) in
             if let error = error {
                 print(error)
             }
@@ -240,7 +240,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func fetchStudentTestData(_ data: Data) {
         
         // Now that we have the number, grab that person's grades
-        if let studentID = User.manager.id {
+        if let studentID = Student.manager.id {
             if let returnedGradesData = TestGrade.getStudentTestGrade(from: data,
                                                                       for: studentID) {
                 print("\n\n\nWe've got grades for: \(returnedGradesData.id)")
@@ -262,16 +262,16 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             self.profilePic.image = image
             // let postRef = self.databaseReference.childByAutoId()
-            let storage = FIRStorage.storage()
+            let storage = Storage.storage()
             let storageRef = storage.reference(forURL: "gs://welearn-a2b14.appspot.com/")
-            let spaceRef = storageRef.child("profileImage/\(User.manager.studentKey!)")
+            let spaceRef = storageRef.child("profileImage/\(Student.manager.studentKey!)")
             
             let data = UIImageJPEGRepresentation(image, 0.25)
-            let metaData = FIRStorageMetadata()
+            let metaData = StorageMetadata()
             metaData.cacheControl = "public,max-age=300";
             metaData.contentType = "image/jpeg";
             
-            let _ = spaceRef.put(data!, metadata: metaData, completion: { (metaData, error) in
+            let _ = spaceRef.putData(data!, metadata: metaData, completion: { (metaData, error) in
                 guard metaData != nil else {
                     print("Error in putting data")
                     return
@@ -288,13 +288,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: - Collectionview stuff
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return User.manager.achievements?.count ?? 0
+        return Student.manager.achievements?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AchievementCollectionViewCell", for: indexPath)
         
-        if let achievementsUnwrapped = User.manager.achievements {
+        if let achievementsUnwrapped = Student.manager.achievements {
             if achievementsUnwrapped.count > 0 {
                 if let achievementCell = cell as? AchievementCollectionViewCell {
                     achievementCell.achievementPic.image = UIImage(named: achievementsUnwrapped[indexPath.row].pic)
@@ -314,7 +314,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if let loadedGrades = User.manager.grades {
+        if let loadedGrades = Student.manager.grades {
             return loadedGrades.count
         } else {
             return 0
@@ -377,13 +377,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func logOutButtonWasPressed(selector: UIButton) {
         AudioServicesPlaySystemSound(1105)
-        if FIRAuth.auth()?.currentUser != nil {
+        if Auth.auth().currentUser != nil {
             do {
-                try FIRAuth.auth()?.signOut()
+                try Auth.auth().signOut()
                 self.navigationController?.navigationBar.isHidden = true
                 selector.isHidden = true
                 self.dismiss(animated: true, completion: nil)
-                User.logOut()
+                Student.logOut()
             }
                 
             catch {
@@ -431,12 +431,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let view = UIImageView()
         let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        // blurEffectView.frame = view.bounds
+        blurEffectView.frame = view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(blurEffectView)
         view.image = #imageLiteral(resourceName: "clouds")
         view.contentMode = .bottom
-        view.backgroundColor = UIColor.weLearnBlue
+        view.backgroundColor = UIColor.weLearnBrightBlue
         return view
     }()
     
@@ -445,30 +445,30 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         pic.layer.borderColor = UIColor.weLearnCoolWhite.cgColor
         pic.backgroundColor = UIColor.white
         pic.contentMode = .scaleAspectFill
-        pic.layer.borderWidth = 3
+        pic.layer.borderWidth = 5
         return pic
     }()
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
-        label.text = User.manager.name ?? "Anon"
+        label.textColor = UIColor.weLearnCoolWhite
+        label.text = Student.manager.name ?? "Anon"
         label.font = UIFont(name: "Avenir-Light", size: 28)
         return label
     }()
     
     lazy var emailLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
-        label.text = User.manager.email ?? "anon@anon.com"
+        label.textColor = UIColor.weLearnCoolWhite
+        label.text = Student.manager.email ?? "anon@anon.com"
         label.font = UIFont(name: "Avenir-Roman", size: 20)
         return label
     }()
     
     lazy var classLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
-        label.text = User.manager.classroom ?? "No class"
+        label.textColor = UIColor.weLearnCoolWhite
+        label.text = Student.manager.classroom ?? "No class"
         label.font = UIFont(name: "Avenir-Roman", size: 20)
         return label
     }()
@@ -485,11 +485,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 20
         layout.minimumLineSpacing = 20
-        layout.estimatedItemSize = CGSize(width: 50, height: 50)
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 25, bottom: 0, right: 25)
+        layout.estimatedItemSize = CGSize(width: 100, height: 100)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 25, bottom: 10, right: 25)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+        collectionView.backgroundColor = UIColor.white.withAlphaComponent(0.90)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(AchievementCollectionViewCell.self, forCellWithReuseIdentifier: "AchievementCollectionViewCell")
@@ -537,8 +537,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
 }

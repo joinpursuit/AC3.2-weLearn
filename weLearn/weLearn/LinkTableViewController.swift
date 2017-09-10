@@ -15,7 +15,7 @@ import AudioToolbox
 
 class LinkTableViewController: UITableViewController, Tappable, SFSafariViewControllerDelegate {
     
-    let databaseReference = FIRDatabase.database().reference()
+    let databaseReference = Database.database().reference()
     var links: [Link]! = []
     var imageDict = [String : UIImage]()
     
@@ -56,7 +56,7 @@ class LinkTableViewController: UITableViewController, Tappable, SFSafariViewCont
         self.view.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
         
-        databaseReference.child("links").child(User.manager.classDatabaseKey!).observeSingleEvent(of: .value, with: { (snapShot) in
+        databaseReference.child("links").child(Student.manager.classDatabaseKey!).observeSingleEvent(of: .value, with: { (snapShot) in
             guard let value = snapShot.value as? [String : Any] else { return }
             var linksArr = [Link]()
             for link in value {
@@ -75,11 +75,11 @@ class LinkTableViewController: UITableViewController, Tappable, SFSafariViewCont
     }
     
     func getProfileImage(_ id: String) -> UIImage? {
-        let storage = FIRStorage.storage()
+        let storage = Storage.storage()
         let storageRef = storage.reference()
         let imageRef = storageRef.child("profileImage/\(id)")
         
-        imageRef.data(withMaxSize: 1*1024*1024) { (data, error) in
+        imageRef.getData(maxSize: 1*1024*1024) { (data, error) in
             if let error = error {
                 print(error)
             }
@@ -168,8 +168,6 @@ class LinkTableViewController: UITableViewController, Tappable, SFSafariViewCont
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
 }

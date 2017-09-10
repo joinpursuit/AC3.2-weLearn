@@ -17,7 +17,7 @@ class APIRequestManager {
         let session = URLSession(configuration: URLSessionConfiguration.default)
         session.dataTask(with: myURL) { (data: Data?, response: URLResponse?, error: Error?) in
             if error != nil {
-                print("Error during session: \(error)")
+                print("Error during session: \(String(describing: error))")
             }
             guard let validData = data else { return }
             callback(validData)

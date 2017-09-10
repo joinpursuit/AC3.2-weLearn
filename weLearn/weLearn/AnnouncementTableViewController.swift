@@ -12,7 +12,7 @@ import AudioToolbox
 import FirebaseAuth
 import FirebaseStorage
 
-class OldAnnouncementsTableViewController: UITableViewController {
+class AnnouncementsTableViewController: UITableViewController {
     
     fileprivate let reuseIdentifier = "AnnouncementCell"
     
@@ -104,8 +104,6 @@ class OldAnnouncementsTableViewController: UITableViewController {
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
 }
