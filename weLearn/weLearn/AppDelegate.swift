@@ -34,8 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         if let window = self.window {
-            window.apply(gradient: [UIColor.weLearnBrightBlue, UIColor.weLearnLightBlue, UIColor.white])
-            
             let myRootVC = InitialViewController()
             window.rootViewController = myRootVC
             window.makeKeyAndVisible()

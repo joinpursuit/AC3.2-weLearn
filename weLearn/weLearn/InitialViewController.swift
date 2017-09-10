@@ -64,6 +64,10 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         self.classTextField.delegate = self
         self.nameTextField.delegate = self
         self.studentIDTextField.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         viewHiearchy()
         configureConstraints()
@@ -76,11 +80,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             classTextField,
             studentIDTextField
         ]
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
         loginTabWasPressed()
         activityIndicator.isHidden = true
@@ -564,8 +563,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 
                 self.registerButton.isEnabled = true
                 self.registerButton.transform = .identity
-                self.loginButton.isHidden = true
-                self.loginButton.isEnabled = false
                 
                 self.activityIndicator.stopAnimating()
                 self.activityIndicatorLabel.isHidden = true
