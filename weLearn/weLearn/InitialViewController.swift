@@ -386,53 +386,38 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 }
             }
             
-            // 3) Looks like we can't find the class. Time to create a ref for it in the database
+            // 3) Looks like we can't find the class. Show an alert to prevent students from creating arbitrary classes.
             if !containsClass {
-                let newClassRef = classBuckets.childByAutoId()
-                let className = credentials.studentClass
-                newClassRef.setValue(["name" : className]) { (error, reference) in
-                    
-                    // 3A) Looks like the ref was created. Time to finish up the rest of the user creation in database.
-                    if error == nil {
-                        print("\n\n\n\n Class \(className) doesn't exist! Created at \\classes\\\(reference.key)")
-                        databaseCodeForClass = reference.key
-                        
-                        let dict = [
-                            "studentName" : credentials.name,
-                            "studentEmail" : credentials.email,
-                            "class" : credentials.studentClass,
-                            "classKey" : databaseCodeForClass,
-                            "studentID" : credentials.studentID
-                        ]
-                        
-                        referenceLink.setValue(dict)
-                        self.fillInSingleton(currentUser)
-                    }
-                }
-            } else {
-                print("\n\n\n\n Class \(credentials.studentClass) exists already! It's at \\classes\\\(databaseCodeForClass)")
+                showAlert("We can't find your class!", presentOn: self)
+                
+                self.activityIndicator.stopAnimating()
+                self.activityIndicatorLabel.isHidden = true
+                self.loadingOverlay.isHidden = true
+                
             }
         })
     }
     
-    func fillInSingleton(_ string: String) {
-        let user = databaseReference.child("users").child(string)
-        user.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let valueDict = snapshot.value as? [String : Any] {
-                let user = Student.manager
-                user.classroom = valueDict["class"] as? String
-                user.classDatabaseKey = valueDict["classKey"] as? String
-                user.email = valueDict["studentEmail"] as? String
-                user.id = valueDict["studentID"] as? String
-                user.name = valueDict["studentName"] as? String
-                user.studentKey = string
-                
-                DispatchQueue.main.async {
-                    // Load tab bar now!
-                    self.fillInClassSingleton(user.classDatabaseKey)
+    func fillInSingleton(_ string: String?) {
+        if let existingUser = string {
+            let student = databaseReference.child("users").child(existingUser)
+            student.observeSingleEvent(of: .value, with: { (snapshot) in
+                if let valueDict = snapshot.value as? [String : Any] {
+                    let student = Student.manager
+                    student.classroom = valueDict["class"] as? String
+                    student.classDatabaseKey = valueDict["classKey"] as? String
+                    student.email = valueDict["studentEmail"] as? String
+                    student.id = valueDict["studentID"] as? String
+                    student.name = valueDict["studentName"] as? String
+                    student.studentKey = string
+                    
+                    DispatchQueue.main.async {
+                        // Load tab bar now!
+                        self.fillInClassSingleton(student.classDatabaseKey)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     
     func fillInClassSingleton(_ classKey: String?) {

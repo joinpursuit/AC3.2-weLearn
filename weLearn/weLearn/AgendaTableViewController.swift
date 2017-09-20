@@ -47,7 +47,7 @@ class AgendaTableViewController: UITableViewController {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 268.0
         
-        tableView.separatorStyle = .singleLine
+        tableView.separatorStyle = .none
         
         self.view.addSubview(activityIndicator)
         
