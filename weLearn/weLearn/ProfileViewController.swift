@@ -70,23 +70,23 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
-    //    override func viewWillAppear(_ animated: Bool) {
-    //        super.viewWillAppear(false)
-    //    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
         
         uploadImageButton.layer.borderColor = UIColor.black.cgColor
         uploadImageButton.layer.borderWidth = 1
         
-        //        if gradesParsed.isEmpty {
         startGrabbingTestData()
-        //        }
-        
-        //        if achievements == nil {
         getChievos()
-        //        }
+        
+        if achievements == nil && testGrades == nil {
+            showAlert("No tests or acheivements yet", presentOn: self)
+        } else if testGrades == nil {
+            showAlert("No test grades...yet", presentOn: self)
+        } else if achievements == nil {
+            showAlert("No acheivements...yet", presentOn: self)
+        }
+        
         if Student.manager.studentKey != nil {
             getProfileImage()
         }

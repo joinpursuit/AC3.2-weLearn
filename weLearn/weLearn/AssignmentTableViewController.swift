@@ -63,8 +63,13 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
         super.viewDidAppear(false)
         
         if assignments == nil {
-            readAssignments()
             startGrabbingAssignmentsData()
+            
+            if assignmentGrades != nil {
+                readAssignments()
+            } else {
+                showAlert("No assignments graded yet", presentOn: self)
+            }
         }
     }
     
@@ -90,6 +95,8 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
+            } else {
+                print("No bueno")
             }
         }
     }
