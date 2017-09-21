@@ -71,8 +71,6 @@ class AnnouncementsTableViewController: UITableViewController {
         }
     }
     
-
-    
     // MARK: - Actions
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

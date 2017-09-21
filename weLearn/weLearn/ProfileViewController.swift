@@ -70,21 +70,20 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        uploadImageButton.layer.borderColor = UIColor.black.cgColor
+        uploadImageButton.layer.borderWidth = 1
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
         
-        uploadImageButton.layer.borderColor = UIColor.black.cgColor
-        uploadImageButton.layer.borderWidth = 1
+        if emptyTestGrades.isHidden {
+            startGrabbingTestData()
+        }
         
-        startGrabbingTestData()
-        getChievos()
-        
-        if achievements == nil && testGrades == nil {
-            showAlert("No tests or acheivements yet", presentOn: self)
-        } else if testGrades == nil {
-            showAlert("No test grades...yet", presentOn: self)
-        } else if achievements == nil {
-            showAlert("No acheivements...yet", presentOn: self)
+        if emptyAchievements.isHidden {
+            getChievos()
         }
         
         if Student.manager.studentKey != nil {
@@ -93,7 +92,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func getChievos() {
-        //        if User.manager.achievements == nil {
         APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(achievementsSheetID)/od6/public/basic?alt=json") { (data: Data?) in
             if data != nil {
                 if let returnedAnnouncements = AchievementBucket.getStudentAchievementBucket(from: data!, for: Student.manager.id!) {
@@ -101,13 +99,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                         self.achievements = AchievementBucket.parseBucketString(returnedAnnouncements.contentString)
                         self.collectionView.reloadData()
                     }
+                } else {
+                    self.emptyAchievements.isHidden = false
+                    self.view.setNeedsLayout()
                 }
             }
         }
-        //        }
-//        else {
-//            self.collectionView.reloadData()
-//        }
     }
     
     func getProfileImage() {
@@ -129,7 +126,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //MARK: - Views
     
     func viewHeirarchy() {
-        self.view.addSubview(activityIndicator)
         self.view.addSubview(profileBox)
         self.view.addSubview(profilePic)
         self.view.addSubview(nameLabel)
@@ -137,10 +133,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.view.addSubview(classLabel)
         self.view.addSubview(tableView)
         self.view.addSubview(collectionView)
+        self.view.addSubview(emptyTestGrades)
+        self.view.addSubview(emptyAchievements)
         self.view.addSubview(uploadImageButton)
         self.view.addSubview(presentAchievement)
         self.presentAchievement.addSubview(achievementPic)
         self.presentAchievement.addSubview(achievementLabel)
+        self.view.addSubview(activityIndicator)
     }
     
     func configureConstraints() {
@@ -148,15 +147,25 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             view.center.equalToSuperview()
         }
         
-        tableView.snp.makeConstraints { (tV) in
+        tableView.snp.makeConstraints { tV in
             tV.leading.trailing.bottom.equalToSuperview()
             tV.top.equalTo(collectionView.snp.bottom).offset(10)
         }
         
-        collectionView.snp.makeConstraints { (cV) in
+        emptyTestGrades.snp.makeConstraints { view in
+            view.leading.equalTo(tableView.snp.leading)
+            view.top.equalTo(tableView)
+        }
+        
+        collectionView.snp.makeConstraints { cV in
             cV.leading.trailing.equalToSuperview()
             cV.top.equalTo(profileBox.snp.bottom)
             cV.height.equalTo(150)
+        }
+        
+        emptyAchievements.snp.makeConstraints { view in
+            view.leading.equalTo(collectionView.snp.leading)
+            view.top.equalTo(collectionView)
         }
         
         profileBox.snp.makeConstraints { view in
@@ -198,19 +207,19 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             view.trailing.equalTo(profileBox).inset(45)
         }
         
-        self.presentAchievement.snp.makeConstraints { view in
+        presentAchievement.snp.makeConstraints { view in
             view.leading.equalTo(collectionView.snp.trailing)
             view.bottom.equalTo(collectionView)
         }
         
-        self.achievementPic.snp.makeConstraints { view in
+        achievementPic.snp.makeConstraints { view in
             view.top.leading.equalToSuperview().offset(10)
             view.trailing.equalToSuperview().inset(10)
             view.width.equalTo(245)
             view.height.equalTo(245)
         }
         
-        self.achievementLabel.snp.makeConstraints { view in
+        achievementLabel.snp.makeConstraints { view in
             view.top.equalTo(achievementPic.snp.bottom).offset(10)
             view.leading.trailing.equalTo(presentAchievement)
             view.bottom.equalToSuperview().inset(10)
@@ -221,24 +230,24 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     //MARK: - User Functions
     
     func startGrabbingTestData() {
-        self.view.bringSubview(toFront: activityIndicator)
+        self.tableView.bringSubview(toFront: activityIndicator)
         activityIndicator.startAnimating()
         
-        //        if User.manager.grades == nil {
         APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(gradesSheetID)/od6/public/basic?alt=json") { (data: Data?) in
             if data != nil {
                 self.fetchStudentTestData(data!)
             } else {
+                self.emptyTestGrades.isHidden = false
+                self.view.setNeedsLayout()
                 self.activityIndicator.stopAnimating()
             }
         }
-        //        }
+        
         self.tableView.reloadData()
         self.activityIndicator.stopAnimating()
     }
     
     func fetchStudentTestData(_ data: Data) {
-        
         // Now that we have the number, grab that person's grades
         if let studentID = Student.manager.id {
             if let returnedGradesData = TestGrade.getStudentTestGrade(from: data,
@@ -251,7 +260,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.tableView.reloadData()
                     self.activityIndicator.stopAnimating()
                 }
+            } else {
+                emptyTestGrades.isHidden = false
+                self.view.setNeedsLayout()
+                self.activityIndicator.stopAnimating()
             }
+        }
+        
+        if gradesParsed.isEmpty {
+            self.emptyTestGrades.isHidden = false
+            self.view.setNeedsLayout()
+            self.activityIndicator.stopAnimating()
         }
     }
     
@@ -470,6 +489,24 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         label.textColor = UIColor.weLearnCoolWhite
         label.text = Student.manager.classroom ?? "No class"
         label.font = UIFont(name: "Avenir-Roman", size: 20)
+        return label
+    }()
+    
+    lazy var emptyTestGrades: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.weLearnBlack
+        label.text = "No grades yet"
+        label.font = UIFont(name: "Avenir-LightOblique", size: 30)
+        label.isHidden = true
+        return label
+    }()
+    
+    lazy var emptyAchievements: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.weLearnBlack
+        label.text = "No achievements yet"
+        label.font = UIFont(name: "Avenir-LightOblique", size: 30)
+        label.isHidden = true
         return label
     }()
     

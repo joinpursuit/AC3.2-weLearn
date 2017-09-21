@@ -51,41 +51,45 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
         tableView.estimatedRowHeight = 268.0
         
         self.view.addSubview(activityIndicator)
+        self.view.addSubview(emptyGrades)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        activityIndicator.snp.makeConstraints { view in
+        self.activityIndicator.snp.makeConstraints { view in
             view.center.equalToSuperview()
+        }
+        
+        self.emptyGrades.snp.makeConstraints { view in
+            view.leading.equalTo(tableView.snp.leading)
+            view.top.equalTo(tableView)
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
         
-        if assignments == nil {
+        if emptyGrades.isHidden {
             startGrabbingAssignmentsData()
-            
-            if assignmentGrades != nil {
-                readAssignments()
-            } else {
-                showAlert("No assignments graded yet", presentOn: self)
-            }
+            readAssignments()
         }
     }
     
     func startGrabbingAssignmentsData() {
+        self.tableView.bringSubview(toFront: activityIndicator)
+        self.activityIndicator.startAnimating()
+        
         if Student.manager.assignmentGrades == nil {
             APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(gradeBookSheetID)/od6/public/basic?alt=json") { (data: Data?) in
                 if data != nil {
                     self.fetchStudentAssignmentData(data!)
+                } else {
+                    self.activityIndicator.stopAnimating()
                 }
             }
         }
     }
     
     func fetchStudentAssignmentData(_ data: Data) {
-        
-        // Now that we have the number, grab that person's grades
         if let studentID = Student.manager.id {
             if let returnedGradesData = AssignmentGrade.getStudentAssignmentGrade(from: data, for: studentID) {
                 print("\n\n\nWe've got grades for: \(returnedGradesData.id)")
@@ -93,18 +97,21 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                 self.assignmentGrades = returnedGradesData
                 self.gradesParsed = AssignmentGrade.parseGradeString(self.assignmentGrades!.grades)
                 DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
                     self.tableView.reloadData()
                 }
             } else {
-                print("No bueno")
+                print("error loading data!")
+                emptyGrades.isHidden = false
+                self.view.setNeedsLayout()
+                self.activityIndicator.stopAnimating()
             }
         }
+        
+        activityIndicator.stopAnimating()
     }
     
     func readAssignments() {
-        self.view.bringSubview(toFront: activityIndicator)
-        activityIndicator.startAnimating()
-        
         if Student.manager.assignments == nil {
             APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(assignmentSheetID)/od6/public/basic?alt=json") { (data: Data?) in
                 if data != nil {
@@ -118,9 +125,6 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                     }
                 }
             }
-        } else {
-            print("error loading data!")
-            self.activityIndicator.stopAnimating()
         }
     }
     
@@ -160,8 +164,8 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let assignments = assignments {
-            return assignments.count
+        if assignments !=  nil {
+            return gradesParsed.count
         }
         else {
             return 0
@@ -239,4 +243,11 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
         return view
     }()
     
+    lazy var emptyGrades: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.font = UIFont(name: "Avenir-LightOblique", size: 30)
+        label.text = "No assignment grades yet"
+        return label
+    }()
 }
