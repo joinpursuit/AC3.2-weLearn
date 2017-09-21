@@ -346,7 +346,7 @@ class AgendaTableViewController: UITableViewController {
         label.textAlignment = .center
         label.numberOfLines = 5
         label.lineBreakMode = .byWordWrapping
-        label.backgroundColor = UIColor.weLearnBrightBlue.withAlphaComponent(0.8)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         return label
     }()
 }

@@ -73,7 +73,7 @@ class AnnouncementTableViewCell: UITableViewCell {
     
     lazy var box: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.weLearnCoolWhite
+        view.backgroundColor = UIColor.white
         view.isOpaque = true
         view.layer.borderColor = UIColor.weLearnBlue.cgColor
         view.layer.borderWidth = 0.75
@@ -86,7 +86,7 @@ class AnnouncementTableViewCell: UITableViewCell {
         lbl.lineBreakMode = .byTruncatingTail
         lbl.font = UIFont(name: "Avenir-Heavy", size: 20)
         lbl.textColor = UIColor.darkGray
-        lbl.backgroundColor = UIColor.weLearnCoolWhite
+        lbl.backgroundColor = UIColor.white
         lbl.isOpaque = true
         return lbl
     }()
@@ -97,7 +97,7 @@ class AnnouncementTableViewCell: UITableViewCell {
         lbl.textAlignment = .left
         lbl.lineBreakMode = .byWordWrapping
         lbl.font = UIFont(name: "Avenir-Light", size: 24)
-        lbl.backgroundColor = UIColor.weLearnCoolWhite
+        lbl.backgroundColor = UIColor.white
         lbl.isOpaque = true
         return lbl
     }()
@@ -108,7 +108,7 @@ class AnnouncementTableViewCell: UITableViewCell {
         lbl.lineBreakMode = .byTruncatingTail
         lbl.font = UIFont(name: "Avenir-Heavy", size: 20)
         lbl.textColor = UIColor.darkGray
-        lbl.backgroundColor = UIColor.weLearnCoolWhite
+        lbl.backgroundColor = UIColor.white
         lbl.isOpaque = true
         return lbl
     }()

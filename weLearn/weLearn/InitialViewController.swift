@@ -18,11 +18,11 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
     var databaseObserver: DatabaseHandle?
     var signedInUser: User?
     
+     var toggleIsHiddenWhenTabIsChanged = [UIView]()
+    
     // pickerview
     
     var classOptions = ["AC3.1", "AC3.2", "AC3.3"]
-    
-    var toggleIsHiddenWhenTabIsChanged = [UIView]()
     
     // Timer stuff for buttons
     
@@ -136,7 +136,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
     {
         let label = UILabel()
         label.text = classOptions[row]
-        label.textColor = UIColor.weLearnCoolWhite
+        label.backgroundColor = UIColor.white
         label.font = UIFont(name: "Avenir-Roman", size: 30)
         label.textAlignment = .center
         return label

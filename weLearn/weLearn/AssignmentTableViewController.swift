@@ -60,8 +60,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
         }
         
         self.emptyGrades.snp.makeConstraints { view in
-            view.leading.equalTo(tableView.snp.leading)
-            view.top.equalTo(tableView)
+            view.center.equalTo(tableView)
         }
     }
     
@@ -87,6 +86,8 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                 }
             }
         }
+        
+         self.activityIndicator.stopAnimating()
     }
     
     func fetchStudentAssignmentData(_ data: Data) {
@@ -246,6 +247,7 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     lazy var emptyGrades: UILabel = {
         let label = UILabel()
         label.isHidden = true
+        label.textAlignment = .center
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.text = "No assignment grades yet"
         return label

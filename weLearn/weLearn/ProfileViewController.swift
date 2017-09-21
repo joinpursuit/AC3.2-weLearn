@@ -153,8 +153,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         emptyTestGrades.snp.makeConstraints { view in
-            view.leading.equalTo(tableView.snp.leading)
-            view.top.equalTo(tableView)
+            view.center.equalTo(tableView)
         }
         
         collectionView.snp.makeConstraints { cV in
@@ -164,8 +163,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         emptyAchievements.snp.makeConstraints { view in
-            view.leading.equalTo(collectionView.snp.leading)
-            view.top.equalTo(collectionView)
+            view.center.equalTo(collectionView)
         }
         
         profileBox.snp.makeConstraints { view in
@@ -495,6 +493,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     lazy var emptyTestGrades: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.weLearnBlack
+        label.textAlignment = .center
         label.text = "No test grades yet"
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.isHidden = true
@@ -504,6 +503,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     lazy var emptyAchievements: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.weLearnBlack
+        label.textAlignment = .center
         label.text = "No achievements yet"
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.isHidden = true
