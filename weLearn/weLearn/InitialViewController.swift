@@ -136,6 +136,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
     {
         let label = UILabel()
         label.text = classOptions[row]
+        label.textColor = UIColor.weLearnCoolWhite
         label.font = UIFont(name: "Avenir-Roman", size: 30)
         label.textAlignment = .center
         return label
@@ -793,7 +794,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
     
     lazy var picker: UIPickerView = {
         let picker = UIPickerView()
-        picker.backgroundColor = UIColor.weLearnCoolWhite
+        picker.backgroundColor = UIColor.weLearnBlue
         return picker
     }()
     
