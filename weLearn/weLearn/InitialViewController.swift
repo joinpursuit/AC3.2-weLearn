@@ -12,11 +12,15 @@ import FirebaseAuth
 import AudioToolbox
 import FirebaseDatabase
 
-class InitialViewController: UIViewController, UITextFieldDelegate {
+class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
     
     var databaseReference: DatabaseReference!
     var databaseObserver: DatabaseHandle?
     var signedInUser: User?
+    
+    // pickerview
+    
+    var classOptions = ["AC3.1", "AC3.2", "AC3.3"]
     
     var toggleIsHiddenWhenTabIsChanged = [UIView]()
     
@@ -64,6 +68,9 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         self.classTextField.delegate = self
         self.nameTextField.delegate = self
         self.studentIDTextField.delegate = self
+        
+        self.classTextField.inputView = picker
+        self.picker.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -101,6 +108,39 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         
         hoverCloud()
     }
+    
+    // Picker
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return classOptions.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        classTextField.text = classOptions[row]
+        self.view.endEditing(true)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return classOptions[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+        return CGFloat(60)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView
+    {
+        let label = UILabel()
+        label.text = classOptions[row]
+        label.font = UIFont(name: "Avenir-Roman", size: 30)
+        label.textAlignment = .center
+        return label
+    }
+    
     
     // MARK: - Tab loading functions
     
@@ -302,6 +342,11 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             view.leading.equalTo(box).offset(15)
             view.trailing.equalTo(box).inset(15)
         }
+        
+//        picker.snp.makeConstraints { view in
+//            view.width.equalTo(120)
+//            view.height.equalTo(120)
+//        }
         
         registerButton.snp.makeConstraints { button in
             button.top.equalTo(classTextField.snp.bottom).offset(40)
@@ -611,6 +656,10 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = true }
     }
     
+    // MARK: - Picker View
+    
+    
+    
     // MARK: - Views created here
     
     lazy var activityIndicator: UIActivityIndicatorView = {
@@ -740,6 +789,12 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         thirdTextfield.autocorrectionType = .no
         thirdTextfield.autocapitalizationType = .none
         return thirdTextfield
+    }()
+    
+    lazy var picker: UIPickerView = {
+        let picker = UIPickerView()
+        picker.backgroundColor = UIColor.weLearnCoolWhite
+        return picker
     }()
     
     lazy var classTextField: PaddedTextField = {

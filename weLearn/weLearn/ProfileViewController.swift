@@ -495,7 +495,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     lazy var emptyTestGrades: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.weLearnBlack
-        label.text = "No grades yet"
+        label.text = "No test grades yet"
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.isHidden = true
         return label
