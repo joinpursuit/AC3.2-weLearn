@@ -12,7 +12,7 @@ func showAlert(_ message: String, presentOn: UIViewController) {
     let alertview = JSSAlertView().show(presentOn,
                                         title: message.uppercased(),
                                         buttonText: "Ok, fine".uppercased(),
-                                        color: UIColor.weLearnGrey)
+                                        color: UIColor.weLearnBlue)
     
     alertview.setTitleFont("Avenir-Black")
     alertview.setTextTheme(.light) // can be .light or .dark
