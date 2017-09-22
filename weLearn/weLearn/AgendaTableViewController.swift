@@ -19,7 +19,7 @@ class AgendaTableViewController: UITableViewController {
     var todaysAgenda: Agenda?
     var toDoList: [String]? = ["Do your best", "Study hard", "Get sleep"] {
         didSet {
-            User.manager.toDoList = toDoList
+            Student.manager.toDoList = toDoList
         }
     }
     var checkedOff = [Int]()
@@ -86,7 +86,7 @@ class AgendaTableViewController: UITableViewController {
     // MARK: - Agenda functions
     
     func grabToDoList() {
-        if User.manager.toDoList == nil {
+        if Student.manager.toDoList == nil {
             APIRequestManager.manager.getData(endPoint: "https://spreadsheets.google.com/feeds/list/\(toDoListSheetID)/od6/public/basic?alt=json") { (data: Data?) in
                 if data != nil {
                     if let returnedList = ToDoList.getTodaysList(from: data!) {
