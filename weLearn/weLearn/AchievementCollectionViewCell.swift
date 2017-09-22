@@ -20,6 +20,13 @@ class AchievementCollectionViewCell: UICollectionViewCell {
         super.init(coder: aDecoder)
     }
     
+    override func layoutSubviews() {
+        self.descriptionLabel.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
+        self.descriptionLabel.layer.shadowColor = UIColor.weLearnBlue.cgColor
+        self.descriptionLabel.layer.shadowOpacity = 0.33
+        self.descriptionLabel.layer.shadowRadius = 3
+    }
+    
     func setupHierarchy() {
         self.contentView.addSubview(achievementPic)
         self.contentView.addSubview(descriptionLabel)
@@ -28,12 +35,12 @@ class AchievementCollectionViewCell: UICollectionViewCell {
     func setupConstraints() {
         
         contentView.snp.makeConstraints { (view) in
-            view.width.height.equalTo(80)
+            view.width.height.equalTo(100)
         }
         
         achievementPic.snp.makeConstraints { (pic) in
             pic.top.equalTo(contentView)
-            pic.width.height.equalTo(60)
+            pic.width.height.equalTo(80)
             pic.centerX.equalTo(contentView)
         }
         
@@ -46,11 +53,11 @@ class AchievementCollectionViewCell: UICollectionViewCell {
     
     lazy var achievementPic: UIImageView = {
         let pic = UIImageView()
-        pic.layer.cornerRadius = 30
+        pic.layer.cornerRadius = 40
         pic.clipsToBounds = true
         pic.contentMode = .scaleAspectFill
         pic.layer.borderColor = UIColor.white.cgColor
-        pic.layer.borderWidth = 3
+        pic.layer.borderWidth = 5
         return pic
     }()
     
@@ -59,12 +66,12 @@ class AchievementCollectionViewCell: UICollectionViewCell {
         lbl.backgroundColor = UIColor.weLearnCoolWhite
         lbl.isOpaque = true
         lbl.textColor = UIColor.weLearnBlue
-        lbl.font = UIFont(name: "Avenir-Black", size: 12)
+        lbl.font = UIFont(name: "Avenir-Black", size: 14)
         lbl.textAlignment = .center
         lbl.numberOfLines = 3
         lbl.lineBreakMode = .byWordWrapping
         lbl.layer.borderColor = UIColor.white.cgColor
-        lbl.layer.borderWidth = 3
+        lbl.layer.borderWidth = 5
         return lbl
     }()
     

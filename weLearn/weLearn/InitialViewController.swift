@@ -56,7 +56,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         
         databaseReference = Database.database().reference()
         
-        self.view.apply(gradient: [UIColor.weLearnBlue, UIColor.weLearnLightBlue, UIColor.weLearnCoolWhite])
+        self.view.apply(gradient: [UIColor.weLearnBrightBlue, UIColor.weLearnLightBlue, UIColor.white])
         
         // these all need the delegate set to get sound on click
         self.passwordTextField.delegate = self
@@ -64,6 +64,10 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         self.classTextField.delegate = self
         self.nameTextField.delegate = self
         self.studentIDTextField.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         viewHiearchy()
         configureConstraints()
@@ -76,11 +80,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             classTextField,
             studentIDTextField
         ]
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
         loginTabWasPressed()
         activityIndicator.isHidden = true
@@ -564,8 +563,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 
                 self.registerButton.isEnabled = true
                 self.registerButton.transform = .identity
-                self.loginButton.isHidden = true
-                self.loginButton.isEnabled = false
                 
                 self.activityIndicator.stopAnimating()
                 self.activityIndicatorLabel.isHidden = true
@@ -633,8 +630,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
     
@@ -658,7 +653,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         let originalImage = #imageLiteral(resourceName: "logoForSplash")
         let templateImage = originalImage.withRenderingMode(.alwaysTemplate)
         view.image = templateImage
-        view.tintColor = /*UIColor(red:0.30, green:0.51, blue:0.69, alpha:1.0)*/UIColor.weLearnLightBlue.withAlphaComponent(0.2)
+        view.tintColor = UIColor.weLearnCoolWhite.withAlphaComponent(0.05)
         view.layer.masksToBounds = false
         return view
     }()

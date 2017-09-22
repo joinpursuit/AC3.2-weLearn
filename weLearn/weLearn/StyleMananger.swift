@@ -14,16 +14,9 @@ class StyleManager {
     private init() {}
     
     func prettify() {
-        //let displayFont = "Thirtysix"
         let boldFont = "Avenir-Black"
-        //let semiboldFont = "Avenir-Medium"
         let regularFont = "Avenir-Roman"
-        //let italicFont = "Avenir-Oblique"
-        //let lightFont = "Avenir-Light"
         let lightItalicFont = "Avenir-LightOblique"
-        
-        //let accessibilityFont = "TiresiasInfofont"
-        //let accessibilityFontItalic = "TiresiasInfofont"
         
         // top bar
         let proxyNavBar = UINavigationBar.appearance()
@@ -38,6 +31,7 @@ class StyleManager {
         let proxyButton = UIButton.appearance()
         
         // generalized info
+        let proxyActivityIndicator = UIActivityIndicatorView.appearance()
         let proxyWebView = UIWebView.appearance()
         let proxyTableView = UITableView.appearance()
         let proxyTableCell = UITableViewCell.appearance()
@@ -56,8 +50,8 @@ class StyleManager {
         proxyLabel.textColor = UIColor.weLearnBlue
         
         proxyTextView.font = UIFont(name: regularFont, size: 16)
-        proxyTextView.textColor = UIColor.weLearnBlack
-        proxyTextView.backgroundColor = UIColor.white
+        proxyTextView.textColor = UIColor.weLearnBlue
+        proxyTextView.backgroundColor = UIColor.weLearnCoolWhite
         
         proxyTextField.backgroundColor = UIColor.weLearnCoolWhite
         proxyTextField.textColor = UIColor.weLearnBlue
@@ -73,6 +67,9 @@ class StyleManager {
         proxyButton.tintColor = UIColor.weLearnBlack
         
         // generalized info styling
+        proxyActivityIndicator.color = UIColor.weLearnBrightBlue
+        proxyActivityIndicator.hidesWhenStopped = true
+        
         proxyWebView.scalesPageToFit = true
         proxyWebView.scrollView.bounces = true
         proxyWebView.layer.cornerRadius = 3.0
@@ -80,7 +77,7 @@ class StyleManager {
         
         proxyTableView.backgroundColor = UIColor.white
         proxyTableCell.backgroundColor = UIColor.weLearnBlue
-        proxySectionHeader.tintColor = UIColor.weLearnCoolWhite
+        proxySectionHeader.tintColor = UIColor.weLearnBrightBlue
         
         proxyScrollView.bounces = true
         //proxyScrollView.backgroundColor = UIColor.weLearnWarmWhite

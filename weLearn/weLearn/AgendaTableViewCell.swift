@@ -24,7 +24,7 @@ class AgendaTableViewCell: UITableViewCell {
         self.isOpaque = true
 
         self.bulletView.image = tintedBullet
-        self.bulletView.tintColor = UIColor.weLearnBlue
+        self.bulletView.tintColor = UIColor.weLearnBrightBlue
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -35,9 +35,23 @@ class AgendaTableViewCell: UITableViewCell {
         self.backgroundColor = UIColor.white
         self.label.font = UIFont(name: "Avenir-Roman", size: 20)
         self.bulletView.isHidden = false
-        self.bulletView.tintColor = UIColor.weLearnBlue
+        self.bulletView.tintColor = UIColor.weLearnBrightBlue
         self.label.text = "M/DD/YY - Lesson Name"
     }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        if selected {
+            self.backgroundColor = UIColor.weLearnCoolWhite
+            self.label.backgroundColor = UIColor.weLearnCoolWhite
+            self.bulletView.backgroundColor = UIColor.weLearnCoolWhite
+        } else {
+            self.backgroundColor = UIColor.white
+            self.label.backgroundColor = UIColor.white
+            self.bulletView.backgroundColor = UIColor.white
+        }
+    }
+    
+    
     
     func setupHierarchy() {
         self.contentView.addSubview(bulletView)

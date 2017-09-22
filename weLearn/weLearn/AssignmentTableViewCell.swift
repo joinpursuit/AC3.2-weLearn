@@ -17,7 +17,7 @@ class AssignmentTableViewCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        self.backgroundColor = UIColor.weLearnLightBlue
+        self.backgroundColor = UIColor.weLearnBrightBlue
         self.isOpaque = true
         
         setupHierarchy()

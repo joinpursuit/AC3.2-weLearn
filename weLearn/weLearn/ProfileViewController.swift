@@ -431,12 +431,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let view = UIImageView()
         let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        // blurEffectView.frame = view.bounds
+        blurEffectView.frame = view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(blurEffectView)
         view.image = #imageLiteral(resourceName: "clouds")
         view.contentMode = .bottom
-        view.backgroundColor = UIColor.weLearnBlue
+        view.backgroundColor = UIColor.weLearnBrightBlue
         return view
     }()
     
@@ -445,13 +445,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         pic.layer.borderColor = UIColor.weLearnCoolWhite.cgColor
         pic.backgroundColor = UIColor.white
         pic.contentMode = .scaleAspectFill
-        pic.layer.borderWidth = 3
+        pic.layer.borderWidth = 5
         return pic
     }()
     
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
+        label.textColor = UIColor.weLearnCoolWhite
         label.text = Student.manager.name ?? "Anon"
         label.font = UIFont(name: "Avenir-Light", size: 28)
         return label
@@ -459,7 +459,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var emailLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
+        label.textColor = UIColor.weLearnCoolWhite
         label.text = Student.manager.email ?? "anon@anon.com"
         label.font = UIFont(name: "Avenir-Roman", size: 20)
         return label
@@ -467,7 +467,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var classLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
+        label.textColor = UIColor.weLearnCoolWhite
         label.text = Student.manager.classroom ?? "No class"
         label.font = UIFont(name: "Avenir-Roman", size: 20)
         return label
@@ -485,11 +485,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 20
         layout.minimumLineSpacing = 20
-        layout.estimatedItemSize = CGSize(width: 50, height: 50)
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 25, bottom: 0, right: 25)
+        layout.estimatedItemSize = CGSize(width: 100, height: 100)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 25, bottom: 10, right: 25)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+        collectionView.backgroundColor = UIColor.white.withAlphaComponent(0.90)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(AchievementCollectionViewCell.self, forCellWithReuseIdentifier: "AchievementCollectionViewCell")
@@ -537,8 +537,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
 }

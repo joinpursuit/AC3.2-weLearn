@@ -229,8 +229,6 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     
     lazy var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-        view.hidesWhenStopped = true
-        view.color = UIColor.weLearnGreen
         return view
     }()
     

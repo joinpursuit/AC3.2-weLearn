@@ -28,14 +28,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Firebase config
         FirebaseApp.configure()
         classSheetsSetup()
-        //UIApplication.shared.statusBarStyle = .lightContent
+        UIApplication.shared.statusBarStyle = .lightContent
         StyleManager.styler.prettify()
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         if let window = self.window {
-            window.backgroundColor =  UIColor.weLearnBlue
-            
             let myRootVC = InitialViewController()
             window.rootViewController = myRootVC
             window.makeKeyAndVisible()
