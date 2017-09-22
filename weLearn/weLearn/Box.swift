@@ -13,7 +13,7 @@ class Box: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.weLearnCoolWhite
+        self.backgroundColor = UIColor.white
         self.isOpaque = true
     }
     

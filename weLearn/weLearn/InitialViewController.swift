@@ -12,13 +12,17 @@ import FirebaseAuth
 import AudioToolbox
 import FirebaseDatabase
 
-class InitialViewController: UIViewController, UITextFieldDelegate {
+class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
     
     var databaseReference: DatabaseReference!
     var databaseObserver: DatabaseHandle?
     var signedInUser: User?
     
-    var toggleIsHiddenWhenTabIsChanged = [UIView]()
+     var toggleIsHiddenWhenTabIsChanged = [UIView]()
+    
+    // pickerview
+    
+    var classOptions = ["AC3.1", "AC3.2", "AC3.3"]
     
     // Timer stuff for buttons
     
@@ -65,6 +69,13 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         self.nameTextField.delegate = self
         self.studentIDTextField.delegate = self
         
+        self.classTextField.inputView = picker
+        self.picker.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         viewHiearchy()
         configureConstraints()
         
@@ -76,11 +87,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             classTextField,
             studentIDTextField
         ]
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
         loginTabWasPressed()
         activityIndicator.isHidden = true
@@ -102,6 +108,40 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         
         hoverCloud()
     }
+    
+    // Picker
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return classOptions.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        classTextField.text = classOptions[row]
+        self.view.endEditing(true)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return classOptions[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+        return CGFloat(60)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView
+    {
+        let label = UILabel()
+        label.text = classOptions[row]
+        label.backgroundColor = UIColor.white
+        label.font = UIFont(name: "Avenir-Roman", size: 30)
+        label.textAlignment = .center
+        return label
+    }
+    
     
     // MARK: - Tab loading functions
     
@@ -304,6 +344,11 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
             view.trailing.equalTo(box).inset(15)
         }
         
+//        picker.snp.makeConstraints { view in
+//            view.width.equalTo(120)
+//            view.height.equalTo(120)
+//        }
+        
         registerButton.snp.makeConstraints { button in
             button.top.equalTo(classTextField.snp.bottom).offset(40)
             button.centerX.equalToSuperview()
@@ -387,53 +432,38 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 }
             }
             
-            // 3) Looks like we can't find the class. Time to create a ref for it in the database
+            // 3) Looks like we can't find the class. Show an alert to prevent students from creating arbitrary classes.
             if !containsClass {
-                let newClassRef = classBuckets.childByAutoId()
-                let className = credentials.studentClass
-                newClassRef.setValue(["name" : className]) { (error, reference) in
-                    
-                    // 3A) Looks like the ref was created. Time to finish up the rest of the user creation in database.
-                    if error == nil {
-                        print("\n\n\n\n Class \(className) doesn't exist! Created at \\classes\\\(reference.key)")
-                        databaseCodeForClass = reference.key
-                        
-                        let dict = [
-                            "studentName" : credentials.name,
-                            "studentEmail" : credentials.email,
-                            "class" : credentials.studentClass,
-                            "classKey" : databaseCodeForClass,
-                            "studentID" : credentials.studentID
-                        ]
-                        
-                        referenceLink.setValue(dict)
-                        self.fillInSingleton(currentUser)
-                    }
-                }
-            } else {
-                print("\n\n\n\n Class \(credentials.studentClass) exists already! It's at \\classes\\\(databaseCodeForClass)")
+                showAlert("We can't find your class!", presentOn: self)
+                
+                self.activityIndicator.stopAnimating()
+                self.activityIndicatorLabel.isHidden = true
+                self.loadingOverlay.isHidden = true
+                
             }
         })
     }
     
-    func fillInSingleton(_ string: String) {
-        let user = databaseReference.child("users").child(string)
-        user.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let valueDict = snapshot.value as? [String : Any] {
-                let user = Student.manager
-                user.classroom = valueDict["class"] as? String
-                user.classDatabaseKey = valueDict["classKey"] as? String
-                user.email = valueDict["studentEmail"] as? String
-                user.id = valueDict["studentID"] as? String
-                user.name = valueDict["studentName"] as? String
-                user.studentKey = string
-                
-                DispatchQueue.main.async {
-                    // Load tab bar now!
-                    self.fillInClassSingleton(user.classDatabaseKey)
+    func fillInSingleton(_ string: String?) {
+        if let existingUser = string {
+            let student = databaseReference.child("users").child(existingUser)
+            student.observeSingleEvent(of: .value, with: { (snapshot) in
+                if let valueDict = snapshot.value as? [String : Any] {
+                    let student = Student.manager
+                    student.classroom = valueDict["class"] as? String
+                    student.classDatabaseKey = valueDict["classKey"] as? String
+                    student.email = valueDict["studentEmail"] as? String
+                    student.id = valueDict["studentID"] as? String
+                    student.name = valueDict["studentName"] as? String
+                    student.studentKey = string
+                    
+                    DispatchQueue.main.async {
+                        // Load tab bar now!
+                        self.fillInClassSingleton(student.classDatabaseKey)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     
     func fillInClassSingleton(_ classKey: String?) {
@@ -564,8 +594,6 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
                 
                 self.registerButton.isEnabled = true
                 self.registerButton.transform = .identity
-                self.loginButton.isHidden = true
-                self.loginButton.isEnabled = false
                 
                 self.activityIndicator.stopAnimating()
                 self.activityIndicatorLabel.isHidden = true
@@ -628,6 +656,10 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         
         _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = true }
     }
+    
+    // MARK: - Picker View
+    
+    
     
     // MARK: - Views created here
     
@@ -758,6 +790,12 @@ class InitialViewController: UIViewController, UITextFieldDelegate {
         thirdTextfield.autocorrectionType = .no
         thirdTextfield.autocapitalizationType = .none
         return thirdTextfield
+    }()
+    
+    lazy var picker: UIPickerView = {
+        let picker = UIPickerView()
+        picker.backgroundColor = UIColor.weLearnBlue
+        return picker
     }()
     
     lazy var classTextField: PaddedTextField = {
