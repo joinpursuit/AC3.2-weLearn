@@ -8,6 +8,7 @@ target 'weLearn' do
   # Pods for weLearn
   
 pod 'SnapKit'
+pod 'JSSAlertView'
 pod 'Firebase/Core'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'

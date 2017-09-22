@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05E1C5C21F6472CF00150103 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E1C5C11F6472CF00150103 /* CustomAlert.swift */; };
 		2D25ED111E6F189700C9903E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D25ED101E6F189700C9903E /* ShareViewController.swift */; };
 		2D25ED141E6F189700C9903E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D25ED121E6F189700C9903E /* MainInterface.storyboard */; };
 		2D25ED181E6F189700C9903E /* ShareExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 2D25ED0E1E6F189700C9903E /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -85,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		01F35F447069D852D8DD870A /* Pods_weLearn.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_weLearn.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05E1C5C11F6472CF00150103 /* CustomAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		2D25ED0E1E6F189700C9903E /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D25ED101E6F189700C9903E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		2D25ED131E6F189700C9903E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -292,6 +294,7 @@
 				D337DA381E64CF1A00DEE7B5 /* ShinyOvalButton.swift */,
 				D337DA3C1E64DABB00DEE7B5 /* PaddedTextField.swift */,
 				D3EEBFD01E7CEA1800EB7EDA /* AnimatedTimer.swift */,
+				05E1C5C11F6472CF00150103 /* CustomAlert.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				9ED47DA31E8098F000F80DB6 /* ToDoList.swift in Sources */,
 				D388A3811E71C14500A44EF0 /* AchievementCollectionViewCell.swift in Sources */,
 				9E80178B1E712A9000409FA7 /* TestGrade.swift in Sources */,
+				05E1C5C21F6472CF00150103 /* CustomAlert.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
