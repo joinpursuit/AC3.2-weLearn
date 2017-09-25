@@ -86,7 +86,6 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                 }
             }
         }
-        
          self.activityIndicator.stopAnimating()
     }
     
@@ -108,8 +107,6 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                 self.activityIndicator.stopAnimating()
             }
         }
-        
-        activityIndicator.stopAnimating()
     }
     
     func readAssignments() {
@@ -247,6 +244,8 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     lazy var emptyGrades: UILabel = {
         let label = UILabel()
         label.isHidden = true
+        label.backgroundColor = UIColor.weLearnBlue
+        label.textColor = UIColor.weLearnCoolWhite
         label.textAlignment = .center
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.text = "No assignment grades yet"

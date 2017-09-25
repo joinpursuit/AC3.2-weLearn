@@ -46,7 +46,7 @@ class LinkTableViewCell: UITableViewCell {
     
     // Action
     
-    func didClickUrlButton(_ sender: UIButton) {
+    @objc func didClickUrlButton(_ sender: UIButton) {
         if let unwrapDelegate = delegate {
             unwrapDelegate.cellTapped(cell: self)
         }

@@ -154,6 +154,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         emptyTestGrades.snp.makeConstraints { view in
             view.center.equalTo(tableView)
+            view.leading.trailing.equalTo(tableView)
         }
         
         collectionView.snp.makeConstraints { cV in
@@ -164,6 +165,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         emptyAchievements.snp.makeConstraints { view in
             view.center.equalTo(collectionView)
+            view.leading.trailing.equalTo(collectionView)
         }
         
         profileBox.snp.makeConstraints { view in
@@ -392,7 +394,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     //Mark: - Button Functions
     
-    func logOutButtonWasPressed(selector: UIButton) {
+    @objc func logOutButtonWasPressed(selector: UIButton) {
         AudioServicesPlaySystemSound(1105)
         if Auth.auth().currentUser != nil {
             do {
@@ -409,7 +411,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    func uploadImageButtonWasTouched() {
+    @objc func uploadImageButtonWasTouched() {
         AudioServicesPlaySystemSound(1104)
         
         UIView.animate(withDuration: 0.5, animations: {
@@ -429,7 +431,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.present(picker, animated: true, completion: nil)
     }
     
-    func presentAchievementWasPressed() {
+    @objc func presentAchievementWasPressed() {
         AudioServicesPlaySystemSound(1104)
         let animator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.7, animations: {
             self.view.layoutIfNeeded()
@@ -492,8 +494,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var emptyTestGrades: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
         label.textAlignment = .center
+        label.backgroundColor = UIColor.weLearnBlue
+        label.textColor = UIColor.weLearnCoolWhite
         label.text = "No test grades yet"
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.isHidden = true
@@ -502,8 +505,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var emptyAchievements: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.weLearnBlack
         label.textAlignment = .center
+        label.backgroundColor = UIColor.weLearnBlue
+        label.textColor = UIColor.weLearnCoolWhite
         label.text = "No achievements yet"
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.isHidden = true

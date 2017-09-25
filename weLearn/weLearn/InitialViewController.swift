@@ -487,7 +487,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
         }
     }
     
-    func loginButtonWasPressed() {
+    @objc func loginButtonWasPressed() {
         AudioServicesPlaySystemSound(1105)
         UIView.animate(withDuration: 0.5, animations: {
             self.loginButton.layer.shadowOpacity = 0.1
@@ -536,7 +536,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
         
     }
     
-    func registerButtonWasPressed() {
+    @objc func registerButtonWasPressed() {
         AudioServicesPlaySystemSound(1105)
         UIView.animate(withDuration: 0.5, animations: {
             self.registerButton.layer.shadowOpacity = 0.1
@@ -603,7 +603,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
         })
     }
     
-    func checkTime () {
+    @objc func checkTime () {
         if self.time >= 0.5  {
             self.present(TabViewController, animated: true)
             timer.invalidate()
@@ -612,7 +612,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
         self.time += 0.1
     }
     
-    func registerTabWasPressed() {
+    @objc func registerTabWasPressed() {
         AudioServicesPlaySystemSound(1104)
         UIView.animate(withDuration: 0.5, animations: {
             self.registerTab.layer.shadowOpacity = 0.1
@@ -634,7 +634,7 @@ class InitialViewController: UIViewController, UITextFieldDelegate, UIPickerView
         _ = toggleIsHiddenWhenTabIsChanged.map { $0.isHidden = false }
     }
     
-    func loginTabWasPressed() {
+    @objc func loginTabWasPressed() {
         AudioServicesPlaySystemSound(1104)
         UIView.animate(withDuration: 0.5, animations: {
             self.loginTab.layer.shadowOpacity = 0.1

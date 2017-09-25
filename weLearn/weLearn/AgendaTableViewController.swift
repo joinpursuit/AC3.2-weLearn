@@ -50,8 +50,6 @@ class AgendaTableViewController: UITableViewController {
         tableView.separatorStyle = .none
         
         self.view.addSubview(activityIndicator)
-        
-       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -146,7 +144,7 @@ class AgendaTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.textColor = UIColor.weLearnCoolWhite
-        header.textLabel?.font = UIFont(name: "Avenir-Light", size: 30)
+        header.textLabel?.font = UIFont(name: "Avenir-Light", size: 20)
         header.textLabel?.textAlignment = .center
         header.textLabel?.adjustsFontSizeToFitWidth = true
     }
@@ -155,7 +153,7 @@ class AgendaTableViewController: UITableViewController {
         switch section {
         case 0:
             if agenda != nil {
-                return todaysAgenda?.lessonName
+                return todaysAgenda?.lessonName.capitalized
             }
         case 1:
             if agenda != nil {
@@ -271,7 +269,7 @@ class AgendaTableViewController: UITableViewController {
         }
     }
     
-    func checkTime () {
+    @objc func checkTime () {
         if self.time >= 2.6  {
             fanfareLabel.alpha = 0
             

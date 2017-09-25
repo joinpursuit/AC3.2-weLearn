@@ -69,9 +69,10 @@ class LinkTableViewController: UITableViewController, Tappable, SFSafariViewCont
             self.tableView.reloadData()
             print(">>> there are \(self.links.count) links")
         }) { (error) in
-            print(error.localizedDescription)
+            print("!!!!!")
             self.activityIndicator.stopAnimating()
         }
+        
     }
     
     func getProfileImage(_ id: String) -> UIImage? {
