@@ -67,14 +67,14 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
         
-        if emptyGrades.isHidden {
+        if assignments == nil {
             startGrabbingAssignmentsData()
             readAssignments()
         }
     }
     
     func startGrabbingAssignmentsData() {
-        self.tableView.bringSubview(toFront: activityIndicator)
+        self.view.bringSubview(toFront: activityIndicator)
         self.activityIndicator.startAnimating()
         
         if Student.manager.assignmentGrades == nil {
@@ -103,8 +103,9 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
             } else {
                 print("error loading data!")
                 emptyGrades.isHidden = false
-                self.view.setNeedsLayout()
                 self.activityIndicator.stopAnimating()
+                self.view.setNeedsLayout()
+
             }
         }
     }
