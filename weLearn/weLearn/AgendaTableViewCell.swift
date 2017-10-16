@@ -51,8 +51,6 @@ class AgendaTableViewCell: UITableViewCell {
         }
     }
     
-    
-    
     func setupHierarchy() {
         self.contentView.addSubview(bulletView)
         self.contentView.addSubview(label)

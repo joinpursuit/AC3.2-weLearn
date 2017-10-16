@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIView {
-    func apply(gradient colors: [UIColor]) {
+    @objc func apply(gradient colors: [UIColor]) {
         let layer: CAGradientLayer = CAGradientLayer()
         
         layer.frame.size = self.frame.size

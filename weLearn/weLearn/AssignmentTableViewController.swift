@@ -67,14 +67,14 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
         
-        if emptyGrades.isHidden {
+        if assignments == nil {
             startGrabbingAssignmentsData()
             readAssignments()
         }
     }
     
     func startGrabbingAssignmentsData() {
-        self.tableView.bringSubview(toFront: activityIndicator)
+        self.view.bringSubview(toFront: activityIndicator)
         self.activityIndicator.startAnimating()
         
         if Student.manager.assignmentGrades == nil {
@@ -86,7 +86,6 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
                 }
             }
         }
-        
          self.activityIndicator.stopAnimating()
     }
     
@@ -104,12 +103,11 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
             } else {
                 print("error loading data!")
                 emptyGrades.isHidden = false
-                self.view.setNeedsLayout()
                 self.activityIndicator.stopAnimating()
+                self.view.setNeedsLayout()
+
             }
         }
-        
-        activityIndicator.stopAnimating()
     }
     
     func readAssignments() {
@@ -247,6 +245,8 @@ class AssignmentTableViewController: UITableViewController, SFSafariViewControll
     lazy var emptyGrades: UILabel = {
         let label = UILabel()
         label.isHidden = true
+        label.backgroundColor = UIColor.weLearnBlue
+        label.textColor = UIColor.weLearnCoolWhite
         label.textAlignment = .center
         label.font = UIFont(name: "Avenir-LightOblique", size: 30)
         label.text = "No assignment grades yet"

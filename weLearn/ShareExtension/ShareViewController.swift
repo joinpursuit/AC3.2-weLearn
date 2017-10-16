@@ -153,7 +153,7 @@ class ShareViewController: SLComposeServiceViewController {
         return userUID
     }
     
-    func getStudentClassFromDatabase(studentID: String, _ completionHandler: @escaping ([String : Any])->(Void)) {
+   @objc func getStudentClassFromDatabase(studentID: String, _ completionHandler: @escaping ([String : Any])->(Void)) {
         let urlString = "https://welearn-a2b14.firebaseio.com/users/\(studentID).json"
         guard let validURL = URL(string: urlString) else { return }
         var request = URLRequest(url: validURL)

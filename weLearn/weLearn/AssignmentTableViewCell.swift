@@ -42,7 +42,7 @@ class AssignmentTableViewCell: UITableViewCell {
     
     // Action
     
-    func didClickRepoButton(_ sender: UIButton) {
+    @objc func didClickRepoButton(_ sender: UIButton) {
         if let unwrapDelegate = delegate {
             unwrapDelegate.cellTapped(cell: self)
         }

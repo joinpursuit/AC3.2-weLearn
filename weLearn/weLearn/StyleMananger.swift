@@ -42,7 +42,7 @@ class StyleManager {
         
         // top bar styling
         proxyNavBar.tintColor = UIColor.weLearnBlue
-        proxyNavBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.weLearnBlue, NSFontAttributeName: UIFont(name: boldFont, size: 21)!]
+        proxyNavBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.weLearnBlue, NSAttributedStringKey.font: UIFont(name: boldFont, size: 21)!]
         proxyNavBar.backgroundColor = UIColor.white
         
         // detail & text styling

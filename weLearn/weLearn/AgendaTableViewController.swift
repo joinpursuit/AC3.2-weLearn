@@ -11,7 +11,7 @@ import AudioToolbox
 import SafariServices
 import FirebaseAuth
 
-class AgendaTableViewController: UITableViewController {
+class AgendaTableViewController: UITableViewController, SFSafariViewControllerDelegate {
     
     let agendaSheetID = MyClass.manager.lessonScheduleID!
     let toDoListSheetID = MyClass.manager.toDoListID
@@ -24,7 +24,7 @@ class AgendaTableViewController: UITableViewController {
     }
     var checkedOff = [Int]()
     
-    var agenda: [Agenda]?
+    var previousAgendas: [Agenda]?
     
     let currentDate = Date()
     
@@ -33,7 +33,7 @@ class AgendaTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        grabToDoList()
+        //        grabToDoList()
         
         let dateInTitle = DateFormatter()
         dateInTitle.dateFormat = "EEEE, MMMM dd"
@@ -50,8 +50,6 @@ class AgendaTableViewController: UITableViewController {
         tableView.separatorStyle = .none
         
         self.view.addSubview(activityIndicator)
-        
-       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -69,7 +67,7 @@ class AgendaTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if agenda == nil {
+        if previousAgendas == nil {
             readAgenda()
         }
         
@@ -103,8 +101,8 @@ class AgendaTableViewController: UITableViewController {
     }
     
     func todaysSchedule() -> Agenda? {
-        if let agenda = agenda {
-            LessonSchedule.manager.setAgenda(agenda)
+        if let fullArray = previousAgendas {
+            LessonSchedule.manager.setAgenda(fullArray)
             if let agendaception = LessonSchedule.manager.pastAgenda {
                 return agendaception[0]
             }
@@ -121,7 +119,7 @@ class AgendaTableViewController: UITableViewController {
                 if data != nil {
                     if let returnedAgenda = Agenda.getAgenda(from: data!) {
                         print("We've got returns: \(returnedAgenda.count)")
-                        self.agenda = returnedAgenda
+                        self.previousAgendas = returnedAgenda
                         DispatchQueue.main.async {
                             self.activityIndicator.stopAnimating()
                             self.todaysAgenda = self.todaysSchedule()
@@ -146,7 +144,7 @@ class AgendaTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.textColor = UIColor.weLearnCoolWhite
-        header.textLabel?.font = UIFont(name: "Avenir-Light", size: 30)
+        header.textLabel?.font = UIFont(name: "Avenir-Light", size: 20)
         header.textLabel?.textAlignment = .center
         header.textLabel?.adjustsFontSizeToFitWidth = true
     }
@@ -154,11 +152,11 @@ class AgendaTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            if agenda != nil {
-                return todaysAgenda?.lessonName
+            if previousAgendas != nil {
+                return todaysAgenda?.lessonName.capitalized
             }
         case 1:
-            if agenda != nil {
+            if previousAgendas != nil {
                 return "Past Agendas"
             }
             else {
@@ -212,6 +210,7 @@ class AgendaTableViewController: UITableViewController {
                 let agendaAtRow = agenda[indexPath.row]
                 cell.label.text = "\(agendaAtRow.dateString) - \(agendaAtRow.lessonName)"
                 cell.bulletView.isHidden = true
+                print(agendaAtRow.repoURL ?? "what")
             }
         default:
             break
@@ -222,56 +221,77 @@ class AgendaTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.section == 0 else {
-            AudioServicesPlaySystemSound(1103)
+            previousAgendaCellClicked(at: indexPath)
             return
         }
         
         AudioServicesPlaySystemSound(1104)
         
         if let cell = tableView.cellForRow(at: indexPath) {
-            
-            if cell.accessoryType == .none {
-                checkedOff.append(indexPath.row)
-                cell.accessoryType = .checkmark
-            } else {
-                if let indexOfCellToRemove = checkedOff.index(of: indexPath.row) {
-                    checkedOff.remove(at: indexOfCellToRemove)
-                    cell.accessoryType = .none
-                }
-            }
-            
-            if checkedOff.count == toDoList?.count {
-                
-                if !self.view.subviews.contains(fanfare) {
-                    self.view.addSubview(fanfareLabel)
-                    self.view.addSubview(fanfare)
-                } else {
-                    fanfare.alpha = 1
-                    fanfareLabel.alpha = 1
-                }
-                
-                
-                fanfareLabel.snp.makeConstraints { view in
-                    view.top.equalToSuperview().offset(200)
-                    view.centerX.equalToSuperview()
-                    view.width.equalToSuperview()
-                }
-                
-                fanfare.snp.makeConstraints { view in
-                    view.top.bottom.equalToSuperview()
-                    view.leading.trailing.equalToSuperview()
-                }
-                
-                fanfareLabel.text = "Hooray! You made it through the day!"
-                
-                self.time = 0
-                self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.checkTime), userInfo: nil, repeats: true)
-                self.timer.fire()
+            checkOff(item: cell, at: indexPath)
+        }
+        
+        if checkedOff.count == toDoList?.count {
+            triggerFanfare()
+        }
+    }
+    
+    func checkOff(item cell: UITableViewCell, at indexPath: IndexPath) {
+        if cell.accessoryType == .none {
+            checkedOff.append(indexPath.row)
+            cell.accessoryType = .checkmark
+        } else {
+            if let indexOfCellToRemove = checkedOff.index(of: indexPath.row) {
+                checkedOff.remove(at: indexOfCellToRemove)
+                cell.accessoryType = .none
             }
         }
     }
     
-    func checkTime () {
+    func triggerFanfare() {
+        if !self.view.subviews.contains(fanfare) {
+            self.view.addSubview(fanfareLabel)
+            self.view.addSubview(fanfare)
+        } else {
+            fanfare.alpha = 1
+            fanfareLabel.alpha = 1
+        }
+        
+        fanfareLabel.snp.makeConstraints { view in
+            view.top.equalToSuperview().offset(200)
+            view.centerX.equalToSuperview()
+            view.width.equalToSuperview()
+        }
+        
+        fanfare.snp.makeConstraints { view in
+            view.top.bottom.equalToSuperview()
+            view.leading.trailing.equalToSuperview()
+        }
+        
+        fanfareLabel.text = "Hooray! You made it through the day!"
+        
+        self.time = 0
+        self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.checkTime), userInfo: nil, repeats: true)
+        self.timer.fire()
+    }
+    
+    func previousAgendaCellClicked(at index: IndexPath) {
+        if let agendas = previousAgendas {
+            if let link = agendas[index.row].repoURL {
+                AudioServicesPlaySystemSound(1105)
+                if let validURL = URL(string: link) {
+                    let svc = SFSafariViewController(url: validURL)
+                    navigationController?.show(svc, sender: self)
+                    svc.delegate = self
+                } else {
+                    AudioServicesPlaySystemSound(1103)
+                }
+                
+            }
+        }
+    }
+    
+    @objc func checkTime () {
         if self.time >= 2.6  {
             fanfareLabel.alpha = 0
             

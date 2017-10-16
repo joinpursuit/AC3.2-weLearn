@@ -16,9 +16,9 @@ class UIOutlinedLabel: UILabel {
     override func drawText(in rect: CGRect) {
         
         let strokeTextAttributes = [
-            NSStrokeColorAttributeName : outlineColor,
-            NSStrokeWidthAttributeName : -1 * outlineWidth, // making this negative gives a border around filled text; postive gives outlined text with a transparent fill
-            ] as [String : Any]
+            NSAttributedStringKey.strokeColor.rawValue : outlineColor,
+            NSAttributedStringKey.strokeWidth : -1 * outlineWidth, // making this negative gives a border around filled text; postive gives outlined text with a transparent fill
+            ] as! [NSAttributedStringKey: Any]
         
         self.attributedText = NSAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
         super.drawText(in: rect)
